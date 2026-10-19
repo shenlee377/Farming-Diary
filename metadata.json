@@ -1,0 +1,8 @@
+{
+  "name": "農田日記",
+  "description": "面向臺灣家庭農場與小型農業經營者的跨平台協作系統架構規格、領域模型與輔助設計導航",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
