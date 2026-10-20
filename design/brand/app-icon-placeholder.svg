@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 農田日記 暫定圖示（佔位設計，非正式商標）。純幾何自繪，無外部素材。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>農田日記 暫定圖示</title>
+  <!-- 背景：紙張米色 -->
+  <rect width="1024" height="1024" rx="224" fill="#FAF7F0"/>
+  <!-- 筆記本頁面 -->
+  <rect x="212" y="232" width="600" height="600" rx="64" fill="#2F6B3A"/>
+  <!-- 裝訂線 -->
+  <rect x="212" y="232" width="72" height="600" rx="36" fill="#245530"/>
+  <!-- 田畦：三條彎曲線 -->
+  <g fill="none" stroke="#FAF7F0" stroke-width="34" stroke-linecap="round">
+    <path d="M336 700 C 460 640, 600 640, 740 700"/>
+    <path d="M336 610 C 460 556, 600 556, 740 610"/>
+    <path d="M336 520 C 460 474, 600 474, 740 520"/>
+  </g>
+  <!-- 新芽 -->
+  <path d="M560 456 L560 360" stroke="#8FCB98" stroke-width="28" stroke-linecap="round" fill="none"/>
+  <path d="M560 372 C 520 300, 448 300, 424 336 C 470 376, 530 380, 560 372 Z" fill="#8FCB98"/>
+  <path d="M560 340 C 600 268, 676 262, 700 300 C 654 344, 594 350, 560 340 Z" fill="#8FCB98"/>
+</svg>

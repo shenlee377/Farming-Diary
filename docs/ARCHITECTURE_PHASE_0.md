@@ -1,5 +1,7 @@
 # 農田日記 (Farmland Diary) - 第一輪架構規格與決策藍圖
 
+> ⚠️ **已被取代（2026-10-20）**：請改看 [README](../README.md) 列出的 `docs/` 文件。本檔保留作歷史紀錄；其中成本金額未附查證來源、「Cloud SQL 開發環境 scale-to-zero」說法不正確，請勿引用。
+
 ## 聲明與平台邊界
 - 正式前端客戶端：Flutter (Android 原始碼開源 GitHub + APK 下載；iOS 準備上架 App Store)。
 - 正式後端：上傳至 GitHub 私有儲存庫 (Private GitHub Repository)，僅供私人維護；Python FastAPI 部署於 Google Cloud Run，物件保存於 Google Cloud Storage。
