@@ -16,10 +16,9 @@ import { Phase5ReconstructionAndReports } from './components/Phase5Reconstructio
 import { Phase6FullStackDeployment } from './components/Phase6FullStackDeployment.tsx';
 import { Phase7AcceptanceAndExporter } from './components/Phase7AcceptanceAndExporter.tsx';
 import { Phase8AgriDataAndManual } from './components/Phase8AgriDataAndManual.tsx';
-import { Phase9FinalCompletion } from './components/Phase9FinalCompletion.tsx';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('phase9_completion');
+  const [activeTab, setActiveTab] = useState<string>('spec');
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans selection:bg-emerald-800 selection:text-white">
@@ -36,7 +35,6 @@ export default function App() {
         {activeTab === 'phase6_fullstack' && <Phase6FullStackDeployment />}
         {activeTab === 'phase7_acceptance' && <Phase7AcceptanceAndExporter />}
         {activeTab === 'phase8_agri_hub' && <Phase8AgriDataAndManual />}
-        {activeTab === 'phase9_completion' && <Phase9FinalCompletion />}
         {activeTab === 'spec' && <SpecOverviewView />}
 
 

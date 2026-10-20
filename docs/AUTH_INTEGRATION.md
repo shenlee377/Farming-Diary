@@ -9,8 +9,10 @@
 | --- | --- |
 | Repository | `shenlee377/chat-coffee-bot-python`（公開可讀） |
 | Branch | `v5-Google-Cloud-Run`（以 `git clone --branch v5-Google-Cloud-Run --single-branch` 取得，未使用預設分支） |
-| Commit SHA | `da37c93de9630d14831d320c272207da45e4c96b` |
+| Commit SHA（完整閱讀） | `da37c93de9630d14831d320c272207da45e4c96b` |
 | Commit 時間／訊息 | 2026-10-19 18:28 +0800「記帳簿經 OAuth 使用咖啡廳 AI：Bearer 版 Apple 路由與有效 AI 偏好」 |
+| 複核時分支最新 SHA | `35dbe966549a376fd41f5fa624810f2010305d7b`（2026-10-20 11:06 +0800「記帳簿委外整理對帳單：/v1/apple/statement 與 read_statement 開關」） |
+| 兩者差異 | 只新增 `ai.tools` 範圍的 `/ai/assistant/v1/apple/statement` 與 `docs/IOS_OAUTH.md` 一行說明；`backend/oauth_clients.py`、`backend/oauth_grants.py`、`web/auth/oauth_native.py`、`web/routes/account/oauth_native.py`、`tests/test_oauth_native.py` **無變更**，下列結論仍適用 |
 | 檢查日期 | 2026-10-20 |
 
 已閱讀的檔案：
@@ -27,7 +29,7 @@
 
 - **部署狀態**：`docs/IOS_OAUTH.md` 第一行仍寫「2026-10-14 重構；尚未部署」。repo 內沒有可證明已部署的紀錄。正式環境是否運行此版本 → 未驗證。
 - **測試結果**：未在咖啡廳環境執行 pytest → 未驗證。
-- **正式網域**：authorization server origin 由 `FLASK_API_ORIGIN` 設定，repo 中沒有正式值 → 未知。現有 `Farming-Diary/backend/app/core/config.py` 裡的 `https://api.coffeeshop.tw/oauth/verify` **不存在於咖啡廳程式碼，是虛構的端點**，必須移除。
+- **正式網域**：authorization server origin 由 `FLASK_API_ORIGIN` 設定，repo 中沒有正式值 → 未知。舊 `Farming-Diary/backend/app/core/config.py` 裡的 `https://api.coffeeshop.tw/oauth/verify` **不存在於咖啡廳程式碼，是虛構的端點**；該檔已隨 `backend/` 刪除（D-010），新後端不得沿用。
 
 ## 2. 已由程式碼驗證的事實
 

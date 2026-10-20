@@ -215,38 +215,6 @@ test('Phase 8 Taiwan disaster relief eligibility evaluates 20% legal threshold',
   assert.equal(eligible.calculatedReliefTWD, 22000);
 });
 
-test('Phase 9 Project completion checklist validates production launch readiness', async () => {
-  const { validateProjectCompletion } = await import('./state_machines.ts');
-
-  // Complete checklist
-  const readyResult = validateProjectCompletion({
-    hasDualRepoArchitecture: true,
-    hasOfflineFirstDriftDb: true,
-    hasStrictSprayingSafetyRules: true,
-    hasMultiCadastreSupport: true,
-    hasPhoneContactSeparation: true,
-    hasCloudRunCostControl: true,
-    hasTaiwanAgriDataIntegration: true,
-  });
-  assert.equal(readyResult.isReadyForLaunch, true);
-  assert.equal(readyResult.readinessStatus, 'READY_FOR_PRODUCTION_LAUNCH');
-  assert.equal(readyResult.totalChecksPassed, 7);
-
-  // Missing food safety check -> Incomplete
-  const missingResult = validateProjectCompletion({
-    hasDualRepoArchitecture: true,
-    hasOfflineFirstDriftDb: true,
-    hasStrictSprayingSafetyRules: false, // Incomplete!
-    hasMultiCadastreSupport: true,
-    hasPhoneContactSeparation: true,
-    hasCloudRunCostControl: true,
-    hasTaiwanAgriDataIntegration: true,
-  });
-  assert.equal(missingResult.isReadyForLaunch, false);
-  assert.equal(missingResult.readinessStatus, 'INCOMPLETE');
-  assert.equal(missingResult.totalChecksPassed, 6);
-});
-
 
 
 

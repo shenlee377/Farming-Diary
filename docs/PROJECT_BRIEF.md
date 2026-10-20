@@ -85,7 +85,7 @@ flowchart LR
 
 | ID | 假設 | 依據／影響 |
 | --- | --- | --- |
-| A1 | 主要資料庫採 Cloud SQL for PostgreSQL + PostGIS | 見 ARCHITECTURE §2；待你確認 |
+| A1 | 主要資料庫採 Cloud SQL for PostgreSQL + PostGIS | 已確認（D-002），保留此列以便追溯 |
 | A2 | 單一工作空間初期 ≤ 10 位成員、≤ 50 塊田、≤ 200 位聯絡人 | 影響索引與成本估算，不影響模型 |
 | A3 | 田間離線最長約 1 個工作日，之後回到有網路處同步 | 影響本機資料保留與衝突策略 |
 | A4 | 第一版地圖用 Google Maps（Flutter `google_maps_flutter`），資料以 WGS84（EPSG:4326）保存，面積以 TWD97 TM2（EPSG:3826）或球面公式計算 | 套件與費率待查證 |
@@ -111,8 +111,8 @@ flowchart LR
 
 ## 5. 高影響澄清問題（最多五個）
 
-1. **公開 repo 內的 `backend/`**：目前 `Farming-Diary` 公開儲存庫已含 FastAPI 後端程式碼，與「後端不公開」衝突。建議：建立私有 repo（暫名 `farming-diary-backend`），把後端移過去，並從公開 repo 刪除該目錄（Git 歷史仍會保留舊版；經檢查其中沒有真實秘密，只有示範用假 token）。是否同意？
-2. **資料庫**：是否同意以 Cloud SQL for PostgreSQL + PostGIS 作為唯一正式資料來源？
+1. ~~公開 repo 內的 `backend/`~~ → 已確認：刪除，後端在私有 repo 重建（D-003、D-010）。
+2. ~~資料庫~~ → 已確認：Cloud SQL for PostgreSQL + PostGIS（D-002）。
 3. **識別碼**：英文名稱與 ID 要用什麼？候選見 [DECISIONS.md](DECISIONS.md) D-008。你是否擁有可用於 reverse-DNS 與 App Links 的網域？
 4. **咖啡廳 OAuth**：v5 重構預計何時部署？是否有 staging 環境？是否同意在咖啡廳 repo 新增 `farming-diary` client，以及兩項小修改（見 AUTH_INTEGRATION §8）？
 5. **第一個實際試用農場**：主要作物與規模是什麼（稻、蔬菜、果樹……）？第一版會以它做驗收資料，但模型仍保持作物中立。

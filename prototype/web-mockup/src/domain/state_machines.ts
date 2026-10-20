@@ -448,7 +448,7 @@ export function evaluatePesticideSafetyInterval(
 
   let notice = `安全採收期為 ${requiredDays} 天，已過 ${daysPassed} 天。`;
   if (isSafe) {
-    notice += ' 符合採收安全標準，殘留容許量查驗合格。';
+    notice += ' 依示範天數已達間隔；示範數字未經查證，正式判斷須依官方登記資料，且不代表殘留檢驗合格。';
   } else {
     notice += ` 尚缺 ${daysRemaining} 天，嚴禁提前採收出貨，以防農藥殘留超標。`;
   }
@@ -508,57 +508,6 @@ export function calculateDisasterReliefEligibility(
     reason: `農損程度達 ${damageRatioPercent}% (超過 20% 門檻)，符合天然災害救助標準，試算救助金約 NT$ ${calculatedAmount.toLocaleString()} 元。`,
   };
 }
-
-// ────────────────────────────────
-// 第九階段 (Phase 9) 純函數邏輯：專案交付完成度與生產就緒查核
-// ────────────────────────────────
-
-export interface ProjectChecklist {
-  hasDualRepoArchitecture: boolean;
-  hasOfflineFirstDriftDb: boolean;
-  hasStrictSprayingSafetyRules: boolean;
-  hasMultiCadastreSupport: boolean;
-  hasPhoneContactSeparation: boolean;
-  hasCloudRunCostControl: boolean;
-  hasTaiwanAgriDataIntegration: boolean;
-}
-
-export function validateProjectCompletion(checklist: ProjectChecklist): {
-  isReadyForLaunch: boolean;
-  totalChecksPassed: number;
-  readinessStatus: 'READY_FOR_PRODUCTION_LAUNCH' | 'INCOMPLETE';
-  message: string;
-} {
-  const checks = [
-    checklist.hasDualRepoArchitecture,
-    checklist.hasOfflineFirstDriftDb,
-    checklist.hasStrictSprayingSafetyRules,
-    checklist.hasMultiCadastreSupport,
-    checklist.hasPhoneContactSeparation,
-    checklist.hasCloudRunCostControl,
-    checklist.hasTaiwanAgriDataIntegration,
-  ];
-
-  const passedCount = checks.filter(Boolean).length;
-  const isAllPassed = passedCount === checks.length;
-
-  if (!isAllPassed) {
-    return {
-      isReadyForLaunch: false,
-      totalChecksPassed: passedCount,
-      readinessStatus: 'INCOMPLETE',
-      message: `尚有 ${checks.length - passedCount} 項關鍵工程規格未滿足，不可宣稱完工。`,
-    };
-  }
-
-  return {
-    isReadyForLaunch: true,
-    totalChecksPassed: passedCount,
-    readinessStatus: 'READY_FOR_PRODUCTION_LAUNCH',
-    message: '全專案 7 大核心原則與 28 條主提示詞規範 100% 查核通過，具備生產級發布條件。',
-  };
-}
-
 
 
 

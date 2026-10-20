@@ -211,7 +211,7 @@ git push -u origin main
                 </span>
               </div>
               <p className="text-sm text-stone-400 mt-1">
-                完成 28 條主提示詞全體系規劃：端到端實務場景逐項驗收、離線同步食安裁決引擎，以及雙儲存庫腳手架匯出指引。
+                示範端到端情境、離線衝突裁決概念與雙儲存庫結構構想；均為模擬畫面，非實際驗收結果。
               </p>
             </div>
           </div>
@@ -220,7 +220,7 @@ git push -u origin main
             <span className="text-stone-400 block mb-0.5">系統驗收狀態</span>
             <span className="text-emerald-300 font-semibold flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>全領域 7 大階段 100% 規格交付就緒</span>
+              <span>示範情境（未對真實系統執行）</span>
             </span>
           </div>
         </div>
@@ -369,7 +369,7 @@ git push -u origin main
                 <h3 className="text-base font-bold text-white">離線優先衝突裁決演算法實驗室 (Pure Conflict Resolver)</h3>
               </div>
               <span className="text-xs text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-lg border border-emerald-800">
-                Unit Tested (100% Pass)
+                示範演算法（測試結果未驗證）
               </span>
             </div>
 

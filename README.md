@@ -6,13 +6,13 @@
 
 | 項目 | 狀態 |
 | --- | --- |
-| 架構與計畫（階段 0） | 文件草案完成，**等待確認** |
+| 架構與計畫（階段 0） | 文件草案完成；資料庫、repo 分割、授權條款已確認（見 [DECISIONS.md](docs/DECISIONS.md)） |
 | 正式 Flutter App（Android／iOS） | **尚未開始** |
-| 私有後端 | **尚未開始**（本 repo 的 `backend/` 是早期範例，不會沿用，見 [DECISIONS.md](docs/DECISIONS.md) D-010） |
+| 私有後端 | **尚未開始**（獨立私有 repo，不在本 repo） |
 | 咖啡廳 OAuth 串接 | **未串接**；已完成程式碼分析 |
 | 建置、測試、部署、上架 | **皆未進行** |
 
-本 repo 根目錄的 React／Vite 程式（`src/`、`index.html`）是 Google AI Studio 產生的**輔助設計原型**，不是正式產品。原型頁面上的「完成」「100% 通過」等字樣未經驗證，請勿採信。
+[`prototype/web-mockup/`](prototype/web-mockup/README.md) 是 Google AI Studio 產生的**輔助設計原型**，不是正式產品，頁面內容皆為未經驗證的示範資料。
 
 ## 文件
 
@@ -30,4 +30,4 @@
 
 ## 授權
 
-尚未選定授權條款（見 DECISIONS D-009）。在加入 LICENSE 檔之前，本 repo 內容保留所有權利。
+本 repo 以 [Apache License 2.0](LICENSE) 授權。私有後端不在此授權範圍內。

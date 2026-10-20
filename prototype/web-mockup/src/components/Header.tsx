@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sprout, ShieldAlert, Layers, BookOpen, Compass, CheckCircle2, Calendar, ShoppingBag, Camera, Box, Terminal, FolderArchive, Globe2, Award } from 'lucide-react';
+import { Sprout, ShieldAlert, Layers, BookOpen, Compass, CheckCircle2, Calendar, ShoppingBag, Camera, Box, Terminal, FolderArchive, Globe2 } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: string;
@@ -16,7 +16,6 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
     { id: 'phase6_fullstack', label: '🚀 第六階段 (Phase 6 實作與部署代碼)', icon: Terminal },
     { id: 'phase7_acceptance', label: '📦 第七階段 (Phase 7 驗收與匯出工廠)', icon: FolderArchive },
     { id: 'phase8_agri_hub', label: '🌐 第八階段 (Phase 8 公用資料與手冊)', icon: Globe2 },
-    { id: 'phase9_completion', label: '🏆 第九階段 (Phase 9 完工交付總結)', icon: Award },
     { id: 'spec', label: '1. 規劃與決策總表', icon: BookOpen },
     { id: 'arch', label: '2. 系統與雲端架構', icon: Layers },
     { id: 'domain', label: '3. 核心領域與資料模型', icon: Sprout },
@@ -32,8 +31,8 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
         <div className="flex items-center gap-2 max-w-5xl">
           <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
           <span>
-            <strong>【架構規格與輔助設計導航原型】</strong>
-            本環境為「農田日記」技術架構、資料模型、狀態機與首期驗收情境之輔助驗證介面。正式發布產品為 <strong>Flutter (Android/iOS)</strong> 雙平台客戶端與獨立私有 <strong>Google Cloud Run (Python FastAPI)</strong> 後端。
+            <strong>【輔助設計原型，非正式產品】</strong>
+            本頁全部為示範資料與模擬畫面，未連接任何後端，未經建置、測試或部署驗證；頁面中的農藥間隔、救助金額等數字未經查證。正式產品為 <strong>Flutter (Android/iOS)</strong> App 與私有後端，均尚未開始實作。
           </span>
         </div>
         <span className="hidden md:inline-block px-2 py-0.5 rounded bg-amber-900 text-amber-300 font-mono text-[11px]">
@@ -62,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
 
           <div className="hidden lg:flex items-center gap-1 text-xs text-stone-400">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>
-            階段 0：架構決策與資料模型就緒
+            階段 0：架構草案，正式實作尚未開始
           </div>
         </div>
 

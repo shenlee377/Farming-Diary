@@ -5,15 +5,15 @@
 | ID | 日期 | 決策 | 狀態 | 理由／備註 |
 | --- | --- | --- | --- | --- |
 | D-001 | 2026-10-20 | 正式產品平台為 Flutter（Android + iOS 同步）；AI Studio React 頁面只是輔助設計原型 | 已確認（需求明訂） | 不為預覽工具改平台 |
-| D-002 | 2026-10-20 | 唯一正式資料來源：Cloud SQL for PostgreSQL + PostGIS | 提議 | ARCHITECTURE §2 |
-| D-003 | 2026-10-20 | 後端為 FastAPI 模組化單體，放獨立私有 repo；公開 repo 不含後端 | 提議 | 需處理現有公開 `backend/`（見 D-010） |
+| D-002 | 2026-10-20 | 唯一正式資料來源：Cloud SQL for PostgreSQL + PostGIS | 已確認（2026-10-20） | ARCHITECTURE §2 |
+| D-003 | 2026-10-20 | 後端為 FastAPI 模組化單體，放獨立私有 repo（暫名 `farming-diary-backend`）；公開 repo 不含後端 | 已確認（2026-10-20） | 公開 repo 的 `backend/` 已刪除；私有 repo 尚未建立，於 M1-A 建立並重寫，不沿用舊範例 |
 | D-004 | 2026-10-20 | 身分：咖啡廳 OAuth（account.read），由農田日記後端兌換 code，自簽不透明 session；不用 Firebase Auth | 提議 | AUTH_INTEGRATION §6 |
 | D-005 | 2026-10-20 | Android／iOS 共用一個 OAuth client（暫名 `farming-diary`） | 提議 | pairwise sub 跨平台一致 |
 | D-006 | 2026-10-20 | 工作派送用 Cloud Tasks；長工作用 Cloud Run Jobs 或其他 GPU 環境；狀態回饋 = 查詢 + SSE | 提議 | ARCHITECTURE §5 |
 | D-007 | 2026-10-20 | 品牌方向 A「田埂手帳」+ 戶外高對比介面規則 | 提議 | DESIGN_SYSTEM |
 | D-008 | 2026-10-20 | 識別碼 | 提議（待你決定） | 見下方候選 |
-| D-009 | 2026-10-20 | 公開 repo 授權條款 | 待決定 | 候選：Apache-2.0（含專利授權）、MIT、GPL-3.0（要求衍生作品開源）。目前 repo 沒有 LICENSE 檔，代表他人無使用權 |
-| D-010 | 2026-10-20 | 現有 AI Studio 原型搬到 `prototype/web-mockup/`；公開 repo 的 `backend/` 移到私有 repo 後刪除 | 提議（待你同意） | 見下方現況稽核 |
+| D-009 | 2026-10-20 | 公開 repo 授權條款：Apache-2.0 | 已確認（2026-10-20） | 根目錄 `LICENSE` 為 apache.org 官方原文。只涵蓋本公開 repo，不涵蓋私有後端 |
+| D-010 | 2026-10-20 | 現有 AI Studio 原型搬到 `prototype/web-mockup/` 並移除未驗證的完成宣稱；公開 repo 的 `backend/` 刪除 | 已確認並執行（2026-10-20） | 舊 `backend/` 仍存在於 Git 歷史（commit `9dde1fe` 以前），經檢查沒有真實秘密 |
 
 ## D-008 識別碼候選（未查證可用性與商標）
 
@@ -28,7 +28,7 @@
 
 以上皆為候選，**未註冊、未確認可用，也不代表屬於你**。
 
-## 現有儲存庫內容稽核（2026-10-20，commit 4765c59）
+## 現有儲存庫內容稽核（2026-10-20，commit 4765c59；處理結果見 D-010）
 
 | 項目 | 現況 | 問題 | 處理建議 |
 | --- | --- | --- | --- |

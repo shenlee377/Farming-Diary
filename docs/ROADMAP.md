@@ -27,7 +27,7 @@ M1-F 若咖啡廳 OAuth 尚未部署，M1 仍可用 dev 身分完成驗收，但
 ```
 Farming-Diary/
 ├── README.md
-├── LICENSE                         # 待決定（D-009）
+├── LICENSE                         # Apache-2.0（D-009）
 ├── docs/                           # 本輪文件
 ├── design/brand/                   # 向量來源
 ├── app/                            # Flutter App（M1-E 建立）
