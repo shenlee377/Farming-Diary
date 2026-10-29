@@ -536,192 +536,311 @@ LazyDatabase _openConnection() {
     path: 'lib/features/inspection/presentation/inspection_camera_screen.dart',
     language: 'dart',
     category: 'FLUTTER',
-    description: '巡田採集相機螢幕：即時相機預覽、Laplacian 模糊預檢、指南針姿態疊合與大按鈕',
-    content: `import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-import 'package:flutter_compass/flutter_compass.dart';
-import 'dart:math' as math;
+    description: '巡田採集相機螢幕：補拍轉向引導疊在取景畫面、字級跟隨系統 textScaler、生命週期與權限處理（模糊快篩由上層 onFrameCaptured 實作）',
+    content: `import 'dart:async';
 
+import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_compass/flutter_compass.dart';
+
+/// 巡田相機畫面：品質提示、補拍轉向引導、離場前查核全部疊在取景畫面上。
+///
+/// 字級：一律使用 Theme 的 textTheme，不寫死 fontSize，
+/// 由 MediaQuery.textScaler 跟隨系統文字大小（Android 字型大小、iOS Dynamic Type）。
+/// HUD 以 Wrap 換行因應大字級；快門等觸控元件尺寸固定，不隨文字放大。
 class InspectionCameraScreen extends StatefulWidget {
   final String sessionId;
   final String fieldName;
+
+  /// 有待補拍時傳入建議朝向（0~359），畫面會顯示往左／往右轉的提示。
+  final double? reshootHeadingDegrees;
+  final String? reshootSegmentName;
+
+  /// 拍到一張影格後交給上層（模糊快篩、寫入離線上傳佇列）。
+  final Future<void> Function(XFile photo, double? headingDegrees) onFrameCaptured;
 
   const InspectionCameraScreen({
     super.key,
     required this.sessionId,
     required this.fieldName,
+    required this.onFrameCaptured,
+    this.reshootHeadingDegrees,
+    this.reshootSegmentName,
   });
 
   @override
   State<InspectionCameraScreen> createState() => _InspectionCameraScreenState();
 }
 
-class _InspectionCameraScreenState extends State<InspectionCameraScreen> {
+class _InspectionCameraScreenState extends State<InspectionCameraScreen>
+    with WidgetsBindingObserver {
+  static const double _alignToleranceDegrees = 15;
+
   CameraController? _cameraController;
-  List<CameraDescription>? _cameras;
-  double? _headingDegrees = 0.0;
+  StreamSubscription<CompassEvent>? _compassSubscription;
+  double? _headingDegrees;
   bool _isTakingPhoto = false;
   int _capturedCount = 0;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _initSensorsAndCamera();
+    WidgetsBinding.instance.addObserver(this);
+    _compassSubscription = FlutterCompass.events?.listen((event) {
+      if (mounted) setState(() => _headingDegrees = event.heading);
+    });
+    _initCamera();
   }
 
-  Future<void> _initSensorsAndCamera() async {
-    // 1. 初始化羅盤感測器
-    FlutterCompass.events?.listen((event) {
-      if (mounted) {
-        setState(() {
-          _headingDegrees = event.heading ?? 0.0;
-        });
+  Future<void> _initCamera() async {
+    try {
+      final cameras = await availableCameras();
+      final back = cameras.where((c) => c.lensDirection == CameraLensDirection.back);
+      if (back.isEmpty) {
+        if (mounted) setState(() => _errorMessage = '找不到後鏡頭');
+        return;
       }
-    });
-
-    // 2. 初始化後置廣角鏡頭 (固定曝光與白平衡避免閃爍)
-    _cameras = await availableCameras();
-    if (_cameras != null && _cameras!.isNotEmpty) {
-      _cameraController = CameraController(
-        _cameras![0],
+      final controller = CameraController(
+        back.first,
         ResolutionPreset.high,
         enableAudio: false,
         imageFormatGroup: ImageFormatGroup.jpeg,
       );
-      await _cameraController!.initialize();
-      if (mounted) setState(() {});
+      await controller.initialize();
+      if (!mounted) {
+        await controller.dispose();
+        return;
+      }
+      setState(() {
+        _cameraController = controller;
+        _errorMessage = null;
+      });
+    } on CameraException catch (e) {
+      if (mounted) {
+        setState(() => _errorMessage = e.code == 'CameraAccessDenied'
+            ? '需要相機權限才能巡田，請到系統設定開啟'
+            : '相機無法啟動，請重新開啟此畫面');
+      }
     }
   }
 
+  // 依 camera 套件建議：App 進背景時釋放相機，回前景再重新初始化
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final controller = _cameraController;
+    if (controller == null || !controller.value.isInitialized) return;
+    if (state == AppLifecycleState.inactive) {
+      setState(() => _cameraController = null);
+      controller.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      _initCamera();
+    }
+  }
+
+  /// 最短轉角：正值往右，負值往左，範圍 -180~180。
+  double? get _turnDelta {
+    final heading = _headingDegrees;
+    final target = widget.reshootHeadingDegrees;
+    if (heading == null || target == null) return null;
+    final diff = (target - heading) % 360;
+    return diff > 180 ? diff - 360 : diff;
+  }
+
+  bool get _reshootAligned {
+    final delta = _turnDelta;
+    return delta == null || delta.abs() <= _alignToleranceDegrees;
+  }
+
   Future<void> _captureFrame() async {
-    if (_cameraController == null || !_cameraController!.value.isInitialized) return;
-    if (_isTakingPhoto) return;
+    final controller = _cameraController;
+    if (controller == null || !controller.value.isInitialized || _isTakingPhoto) return;
+    if (widget.reshootHeadingDegrees != null && !_reshootAligned) {
+      HapticFeedback.heavyImpact();
+      return;
+    }
 
     setState(() => _isTakingPhoto = true);
-
     try {
-      final XFile photo = await _cameraController!.takePicture();
-      // 在本機執行輕量模糊快篩 (Laplacian 方差計算)
-      // 若合格則寫入 SQLite 離線上傳佇列
-      setState(() {
-        _capturedCount += 1;
-      });
-
-      // 觸動震動回饋，讓大太陽下的農民知道已成功拍攝
+      final photo = await controller.takePicture();
+      await widget.onFrameCaptured(photo, _headingDegrees);
+      if (!mounted) return;
+      setState(() => _capturedCount += 1);
+      // 大太陽下看不清螢幕，用震動告知已拍到
       HapticFeedback.mediumImpact();
+    } on CameraException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('這張沒拍成功，請再按一次')),
+        );
+      }
     } finally {
-      setState(() => _isTakingPhoto = false);
+      if (mounted) setState(() => _isTakingPhoto = false);
     }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _compassSubscription?.cancel();
     _cameraController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_cameraController == null || !_cameraController!.value.isInitialized) {
+    final textTheme = Theme.of(context).textTheme;
+    final controller = _cameraController;
+
+    if (_errorMessage != null) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              _errorMessage!,
+              textAlign: TextAlign.center,
+              style: textTheme.titleMedium?.copyWith(color: Colors.white),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (controller == null || !controller.value.isInitialized) {
       return const Scaffold(
         backgroundColor: Colors.black,
         body: Center(child: CircularProgressIndicator(color: Colors.green)),
       );
     }
 
+    final heading = _headingDegrees;
+    final delta = _turnDelta;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 相機全螢幕預覽
-          CameraPreview(_cameraController!),
-
-          // 頂部導航與感測器 HUD
-          Positioned(
-            top: 48,
-            left: 16,
-            right: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white24),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.between,
+          CameraPreview(controller),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    widget.fieldName,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  // 頂部 HUD：大字級時換行，不截斷
+                  _HudPanel(
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          widget.fieldName,
+                          style: textTheme.titleMedium?.copyWith(color: Colors.white),
+                        ),
+                        Text(
+                          '已拍 $_capturedCount 張',
+                          style: textTheme.bodyLarge?.copyWith(color: Colors.white),
+                        ),
+                        if (heading != null)
+                          Text(
+                            '朝向 \${heading.round()}°',
+                            style: textTheme.bodyLarge?.copyWith(color: Colors.white),
+                          ),
+                      ],
+                    ),
                   ),
-                  Row(
-                    children: [
-                      const Icon(Icons.explore, color: Colors.greenAccent, size: 18),
-                      const SizedBox(width: 4),
-                      Text(
-                        '\${_headingDegrees?.toStringAsFixed(0)}°',
-                        style: const TextStyle(color: Colors.white, fontFamily: 'monospace'),
+                  const Spacer(),
+                  // 補拍轉向引導：直接疊在取景畫面中央
+                  if (widget.reshootHeadingDegrees != null)
+                    Semantics(
+                      liveRegion: true,
+                      child: _HudPanel(
+                        color: _reshootAligned ? Colors.green.shade900 : Colors.orange.shade900,
+                        child: Column(
+                          children: [
+                            Text(
+                              delta == null
+                                  ? '正在讀取方位…'
+                                  : _reshootAligned
+                                      ? '對準了，按下快門'
+                                      : '\${delta < 0 ? '往左轉' : '往右轉'}約 \${delta.abs().round()}°',
+                              textAlign: TextAlign.center,
+                              style: textTheme.titleLarge?.copyWith(color: Colors.white),
+                            ),
+                            if (widget.reshootSegmentName != null)
+                              Text(
+                                '補拍：\${widget.reshootSegmentName}',
+                                textAlign: TextAlign.center,
+                                style: textTheme.bodyLarge?.copyWith(color: Colors.white),
+                              ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade900,
-                          borderRadius: BorderRadius.circular(8),
+                    ),
+                  const Spacer(),
+                  // 底部操作列：觸控尺寸固定，不隨文字放大
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton.icon(
+                        onPressed: () => Navigator.of(context).pop(_capturedCount),
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        label: Text('結束', style: textTheme.labelLarge?.copyWith(color: Colors.white)),
+                        style: TextButton.styleFrom(minimumSize: const Size(64, 48)),
+                      ),
+                      Semantics(
+                        button: true,
+                        label: '拍攝影格',
+                        child: GestureDetector(
+                          onTap: _captureFrame,
+                          child: Container(
+                            width: 84,
+                            height: 84,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 4),
+                              color: _isTakingPhoto || !_reshootAligned
+                                  ? Colors.grey
+                                  : Colors.green.shade600,
+                            ),
+                            child: const Icon(Icons.camera_alt, color: Colors.white, size: 40),
+                          ),
                         ),
-                        child: Text(
-                          '已採集: \$_capturedCount',
-                          style: const TextStyle(color: Colors.greenAccent, fontSize: 12),
-                        ),
-                      )
+                      ),
+                      const SizedBox(width: 64),
                     ],
                   ),
                 ],
               ),
             ),
           ),
-
-          // 底部戶外大按鈕與語音輔助
-          Positioned(
-            bottom: 36,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // 結束巡田按鈕
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: Colors.white, size: 32),
-                ),
-
-                // 巨大快門鍵 (專為長輩粗手指與戶外手持設計)
-                GestureDetector(
-                  onTap: _captureFrame,
-                  child: Container(
-                    width: 84,
-                    height: 84,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 4),
-                      color: _isTakingPhoto ? Colors.grey : Colors.green.shade600,
-                    ),
-                    child: const Icon(Icons.camera_alt, color: Colors.white, size: 40),
-                  ),
-                ),
-
-                // 補拍導引
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.help_outline, color: Colors.white, size: 32),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
+    );
+  }
+}
+
+class _HudPanel extends StatelessWidget {
+  final Widget child;
+  final Color color;
+
+  const _HudPanel({required this.child, this.color = Colors.black54});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: child,
     );
   }
 }

@@ -57,7 +57,7 @@ export const DomainModelView: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               田區 (Field) 與土地共有關係
             </h4>
-            <span className="text-[11px] px-2 py-0.5 rounded bg-stone-800 text-stone-300 border border-stone-700">
+            <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-stone-800 text-stone-300 border border-stone-700">
               多對多地號關聯
             </span>
           </div>
@@ -68,7 +68,7 @@ export const DomainModelView: React.FC = () => {
             <div><span className="text-emerald-400">verification_status</span>: 'SELF_REPORTED_UNVERIFIED' | 'CONFIRMED'</div>
             <div><span className="text-emerald-400">cadastral_parcels</span>: 縣市段號多對多關聯</div>
             <div><span className="text-emerald-400">special_agreements</span>: 包含水權水圳分配、田菁輪作約定</div>
-            <div className="text-amber-400/90 text-[11px] pt-1">
+            <div className="text-amber-400/90 text-[0.6875rem] pt-1">
               ⚠️ 法律邊界保護：App 介面自填地主資料一律標示為「自填尚未經地政查證」，避免法律爭議。
             </div>
           </div>
@@ -81,7 +81,7 @@ export const DomainModelView: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               農事紀錄與資材俗稱換算 (Materials)
             </h4>
-            <span className="text-[11px] px-2 py-0.5 rounded bg-stone-800 text-stone-300 border border-stone-700">
+            <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-stone-800 text-stone-300 border border-stone-700">
               事實留存原則
             </span>
           </div>
@@ -92,7 +92,7 @@ export const DomainModelView: React.FC = () => {
             <div><span className="text-emerald-400">raw_input_quantity_text</span>: "一包半" (原始說法不可遺失)</div>
             <div><span className="text-emerald-400">is_specification_confirmed</span>: false → true</div>
             <div><span className="text-emerald-400">standard_amount_kg</span>: 60.0 (40kg * 1.5，確認後才填入)</div>
-            <div className="text-emerald-400/90 text-[11px] pt-1">
+            <div className="text-emerald-400/90 text-[0.6875rem] pt-1">
               ✓ 杜絕負庫存：庫存扣抵採先入先出 (FIFO) 批次異動追蹤，不允許任意覆蓋數值。
             </div>
           </div>
@@ -105,7 +105,7 @@ export const DomainModelView: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               外部工作聯絡人 (WorkContact)
             </h4>
-            <span className="text-[11px] px-2 py-0.5 rounded bg-stone-800 text-stone-300 border border-stone-700">
+            <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-stone-800 text-stone-300 border border-stone-700">
               免裝 App 支援
             </span>
           </div>
@@ -126,7 +126,7 @@ export const DomainModelView: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-red-400"></span>
               施藥狀態嚴謹查驗 (Spraying Safety)
             </h4>
-            <span className="text-[11px] px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">
+            <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">
               安全採收期防線
             </span>
           </div>

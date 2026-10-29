@@ -18,6 +18,10 @@ npm install
 npm run dev
 ```
 
+檢查：`npm run lint`（TypeScript 型別檢查）、`npm test`（狀態機與巡田顯示輔助函式的單元測試）。
+
+字級使用 rem，會跟隨瀏覽器／系統文字大小（iOS Safari 透過 `-apple-system-body` 套用 Dynamic Type，見 `src/index.css`）。
+
 `.env.example` 中的 `GEMINI_API_KEY` 是 AI Studio 原型用的佔位值；請勿把真實金鑰提交到 repo。
 
 此原型不再維護，正式設計以 `docs/` 為準。

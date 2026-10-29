@@ -18,7 +18,7 @@ export const BrandDesignView: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* 方向一 (推薦) */}
           <div className="bg-emerald-950/30 border-2 border-emerald-600/70 rounded-2xl p-5 relative space-y-3">
-            <span className="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white">
+            <span className="absolute top-3 right-3 text-[0.625rem] font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white">
               主要推薦 ⭐
             </span>
             <div className="w-12 h-12 rounded-xl bg-emerald-800 border border-emerald-500/40 flex items-center justify-center text-emerald-200">

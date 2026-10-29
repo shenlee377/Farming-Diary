@@ -21,6 +21,18 @@ import {
   UserX,
   Target,
 } from 'lucide-react';
+import { InspectionViewfinder } from './InspectionViewfinder.tsx';
+import {
+  headingToDirection,
+  QUALITY_STATUS_LABEL,
+  RESHOOT_REASON_LABEL,
+} from '../domain/inspection_ui.ts';
+
+const TIER_LABEL: Record<DeviceCapabilityTier, string> = {
+  TIER_1_DEPTH_AR: '等級一：深度與 AR',
+  TIER_2_POSE_TRACKING: '等級二：姿態追蹤',
+  TIER_3_BASIC_CAMERA_GPS: '等級三：基礎相機',
+};
 
 export const Phase4InspectionQualityLoop: React.FC = () => {
   // 1. 裝置能力分級狀態
@@ -120,36 +132,35 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
     },
   ]);
 
-  // 模擬使用者完成補拍
-  const handleResolveReshoot = () => {
-    setCurrentSession({
-      ...currentSession,
-      qualityStatus: 'PASSED', // 補拍通過 -> 採集通過
-      reshootTasks: currentSession.reshootTasks.map(t => ({
-        ...t,
-        status: 'RESOLVED',
-        resolvedFrameId: 'frame-043-reshoot',
-      })),
-      cloudQualityReport: {
-        coveragePercent: 96.0,
-        averageBlurScore: 185.0,
-        occlusionHandledRatio: '100% 完整覆蓋 (補拍通過)',
-        isReadyFor3DOrAI: true,
-      },
+  // 取景畫面內完成一筆補拍；全部補齊後採集通過
+  const handleResolveReshoot = (taskId: string) => {
+    setCurrentSession(prev => {
+      const reshootTasks = prev.reshootTasks.map(t =>
+        t.id === taskId ? { ...t, status: 'RESOLVED' as const, resolvedFrameId: `${t.id}-frame` } : t,
+      );
+      if (reshootTasks.some(t => t.status === 'PENDING')) {
+        return { ...prev, reshootTasks };
+      }
+      return {
+        ...prev,
+        qualityStatus: 'PASSED',
+        reshootTasks,
+        cloudQualityReport: {
+          coveragePercent: 96.0,
+          averageBlurScore: 185.0,
+          occlusionHandledRatio: '100% 完整覆蓋 (補拍通過)',
+          isReadyFor3DOrAI: true,
+        },
+      };
     });
   };
 
-  // 模擬推進至成果可用 (READY)
-  const handleStartProcessing = () => {
-    setCurrentSession({
-      ...currentSession,
-      qualityStatus: 'PROCESSING',
-    });
+  // 結束巡田後自動進入成果產出，不需要使用者再按「啟動處理」
+  const handleFinish = () => {
+    if (currentSession.qualityStatus !== 'PASSED') return;
+    setCurrentSession(prev => ({ ...prev, qualityStatus: 'PROCESSING' }));
     setTimeout(() => {
-      setCurrentSession(prev => ({
-        ...prev,
-        qualityStatus: 'READY',
-      }));
+      setCurrentSession(prev => (prev.qualityStatus === 'PROCESSING' ? { ...prev, qualityStatus: 'READY' } : prev));
     }, 800);
   };
 
@@ -189,23 +200,32 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
         </div>
       </div>
 
-      {/* 1. Android / iOS 裝置能力分級選擇器 */}
+      {/* 1. 巡田取景畫面：品質回饋、補拍引導、離場查核全部在相機畫面內完成 */}
       <div className="bg-stone-900 border border-stone-800 rounded-2xl p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Smartphone className="w-4 h-4 text-emerald-400" />
-              裝置硬體能力動態分級 (Hardware Capability Tiers)
-            </h3>
-            <p className="text-xs text-stone-400 mt-0.5">
-              依現場手機實際感測能力自動降級適配，保障低階機型基本採集可靠性。
-            </p>
-          </div>
-          <span className="text-xs px-2.5 py-0.5 rounded font-mono bg-stone-800 text-emerald-300 border border-stone-700">
-            當前偵測：{selectedTier}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <Camera className="w-4 h-4 text-emerald-400" />
+            巡田取景畫面（操作簡化提案）
+          </h3>
+          <span className="text-xs px-2.5 py-0.5 rounded bg-stone-800 text-emerald-300 border border-stone-700">
+            <Smartphone className="w-3.5 h-3.5 inline mr-1" />
+            自動偵測：{TIER_LABEL[selectedTier]}
           </span>
         </div>
 
+        <InspectionViewfinder
+          fieldName={currentSession.fieldName}
+          reshootTasks={currentSession.reshootTasks}
+          onReshootResolved={handleResolveReshoot}
+          onFinish={handleFinish}
+        />
+
+        {/* 裝置等級由 App 自動偵測，使用者不需選擇；此處僅供設計討論切換 */}
+        <details className="rounded-xl border border-stone-800 bg-stone-950 p-4">
+          <summary className="cursor-pointer text-xs font-semibold text-stone-300">
+            設計參考：裝置能力分級（App 自動偵測並降級適配，使用者不需選擇）
+          </summary>
+          <div className="mt-3">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <button
             onClick={() => setSelectedTier('TIER_1_DEPTH_AR')}
@@ -217,7 +237,7 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
           >
             <div className="font-bold text-xs text-emerald-300 mb-1">等級一：深度與 AR (Tier 1)</div>
             <div className="text-xs font-semibold text-white">iOS ARKit / Android ARCore Depth</div>
-            <div className="text-[11px] text-stone-400 mt-1">
+            <div className="text-[0.6875rem] text-stone-400 mt-1">
               具備相機內參、6DoF 姿態追蹤與密集/稀疏深度圖，支援高精度公尺級空間定位。
             </div>
           </button>
@@ -232,7 +252,7 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
           >
             <div className="font-bold text-xs text-blue-300 mb-1">等級二：姿態追蹤 (Tier 2)</div>
             <div className="text-xs font-semibold text-white">6DoF 姿態估計 (無深度圖)</div>
-            <div className="text-[11px] text-stone-400 mt-1">
+            <div className="text-[0.6875rem] text-stone-400 mt-1">
               具備相機與視覺慣性里程計 (VIO) 軌跡，無密集深度，以多視角幾何交會計算位置。
             </div>
           </button>
@@ -247,11 +267,13 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
           >
             <div className="font-bold text-xs text-amber-300 mb-1">等級三：基礎相機 (Tier 3)</div>
             <div className="text-xs font-semibold text-white">相機 + GPS + 電子羅盤 (通用最低要求)</div>
-            <div className="text-[11px] text-stone-400 mt-1">
+            <div className="text-[0.6875rem] text-stone-400 mt-1">
               相容老舊或長輩平價手機，保存經緯度與鏡頭朝向角度，重度計算完全交給雲端。
             </div>
           </button>
         </div>
+          </div>
+        </details>
       </div>
 
       {/* 2. 巡田採集閉環狀態與進度 */}
@@ -266,7 +288,7 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
                 currentSession.qualityStatus === 'RESHOOT_REQUIRED' ? 'bg-amber-950 text-amber-300 border-amber-800' :
                 'bg-purple-950 text-purple-300 border-purple-800'
               }`}>
-                階段：{currentSession.qualityStatus}
+                {QUALITY_STATUS_LABEL[currentSession.qualityStatus]}
               </span>
             </div>
             <div className="text-xs text-stone-400 mt-1">
@@ -276,20 +298,19 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
 
           <div className="flex items-center gap-2">
             {currentSession.qualityStatus === 'RESHOOT_REQUIRED' && (
-              <button
-                onClick={handleResolveReshoot}
-                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5"
-              >
-                <Target className="w-3.5 h-3.5" /> 模擬執行補拍 (完成驗收)
-              </button>
+              <span className="text-xs text-amber-300 font-semibold flex items-center gap-1">
+                <Target className="w-4 h-4" /> 請在上方取景畫面完成補拍
+              </span>
             )}
             {currentSession.qualityStatus === 'PASSED' && (
-              <button
-                onClick={handleStartProcessing}
-                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5"
-              >
-                <Cloud className="w-3.5 h-3.5" /> 啟動成果產出 (START_PROCESSING)
-              </button>
+              <span className="text-xs text-blue-300 font-semibold flex items-center gap-1">
+                <Cloud className="w-4 h-4" /> 按「結束」後自動產出成果
+              </span>
+            )}
+            {currentSession.qualityStatus === 'PROCESSING' && (
+              <span className="text-xs text-purple-300 font-semibold flex items-center gap-1">
+                <RefreshCw className="w-4 h-4 animate-spin" /> 整理成果中…
+              </span>
             )}
             {currentSession.qualityStatus === 'READY' && (
               <span className="text-xs text-emerald-400 font-bold flex items-center gap-1">
@@ -350,10 +371,10 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-white">{task.fieldSegment}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-red-950 text-red-300 border border-red-800">
-                      原因：{task.reason}
+                    <span className="text-[0.625rem] px-2 py-0.5 rounded font-mono bg-red-950 text-red-300 border border-red-800">
+                      原因：{RESHOOT_REASON_LABEL[task.reason]}
                     </span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${
+                    <span className={`text-[0.625rem] px-2 py-0.5 rounded font-bold ${
                       task.status === 'RESOLVED' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'
                     }`}>
                       {task.status === 'RESOLVED' ? '已完成補拍' : '待補拍'}
@@ -367,8 +388,8 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
                 <div className="flex items-center gap-3 bg-stone-900 p-2.5 rounded-lg border border-stone-800 text-xs shrink-0">
                   <Compass className="w-4 h-4 text-emerald-400" />
                   <div>
-                    <div className="text-stone-400 text-[10px]">建議鏡頭朝向</div>
-                    <div className="font-mono font-bold text-emerald-300">{task.suggestedHeadingDegrees}° (西北西)</div>
+                    <div className="text-stone-400 text-[0.625rem]">建議鏡頭朝向</div>
+                    <div className="font-mono font-bold text-emerald-300">{task.suggestedHeadingDegrees}°（{headingToDirection(task.suggestedHeadingDegrees)}）</div>
                   </div>
                 </div>
               </div>
@@ -398,7 +419,7 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
             <div key={frame.frameId} className="bg-stone-950 p-3.5 rounded-xl border border-stone-800 text-xs space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-mono font-bold text-white">{frame.frameId}</span>
-                <span className="text-[11px] text-stone-500">{frame.timestamp}</span>
+                <span className="text-[0.6875rem] text-stone-500">{frame.timestamp}</span>
               </div>
 
               <div className="text-stone-300 space-y-1">
@@ -406,7 +427,7 @@ export const Phase4InspectionQualityLoop: React.FC = () => {
                 <div>相機朝向：{frame.compassHeadingDegrees}° ｜ 清晰分數：{frame.blurScore}</div>
               </div>
 
-              <div className="pt-2 border-t border-stone-800 flex items-center justify-between text-[11px]">
+              <div className="pt-2 border-t border-stone-800 flex items-center justify-between text-[0.6875rem]">
                 {frame.isBlurry ? (
                   <span className="text-red-400 font-bold flex items-center gap-1">
                     <AlertTriangle className="w-3.5 h-3.5" /> 模糊度過高 (手機快篩標記)

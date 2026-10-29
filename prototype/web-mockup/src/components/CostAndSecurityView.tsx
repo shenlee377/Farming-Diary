@@ -19,7 +19,7 @@ export const CostAndSecurityView: React.FC = () => {
           <div className="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold text-white">1. 服務固定 / 閒置最低成本 (Baseline)</span>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-stone-800 text-stone-300">每月固定</span>
+              <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-stone-800 text-stone-300">每月固定</span>
             </div>
             <ul className="text-xs text-stone-300 space-y-1.5 leading-relaxed">
               <li>• <strong>Cloud Run (主 API)：</strong>設定 <code>min-instances = 0</code>（縮容至零），閒置期間 $0 元。</li>
@@ -32,7 +32,7 @@ export const CostAndSecurityView: React.FC = () => {
           <div className="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold text-white">2. 請求與儲存遞增成本 (Usage-Based)</span>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">隨規模彈性</span>
+              <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">隨規模彈性</span>
             </div>
             <ul className="text-xs text-stone-300 space-y-1.5 leading-relaxed">
               <li>• <strong>Cloud Run 呼叫費：</strong>每月前 200 萬次請求與 180,000 vCPU-秒在 GCP 免費層 (Free Tier) 內。</li>
@@ -45,7 +45,7 @@ export const CostAndSecurityView: React.FC = () => {
           <div className="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold text-white">3. AI 模型與 GPU 處理成本 (Heavy Compute)</span>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">嚴格設限</span>
+              <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">嚴格設限</span>
             </div>
             <ul className="text-xs text-stone-300 space-y-1.5 leading-relaxed">
               <li>• <strong>Gemini 2.5 Flash：</strong>農務紀錄語音草稿轉文字與摘要查詢，每次呼叫成本約 $0.0001 ~ $0.0003 美元，單月千次約 $0.3 美元。</li>
@@ -57,7 +57,7 @@ export const CostAndSecurityView: React.FC = () => {
           <div className="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold text-white">4. 預算防護與配額限制 (Hard Quotas)</span>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">安全煞車</span>
+              <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">安全煞車</span>
             </div>
             <ul className="text-xs text-stone-300 space-y-1.5 leading-relaxed">
               <li>• <strong>GCP 預算通知與自動告警：</strong>設定每月 $20 / $50 美元雙層閥值，超過發送 Pub/Sub 告警。</li>

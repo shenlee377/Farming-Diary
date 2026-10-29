@@ -238,7 +238,7 @@ git push -u origin main
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">1. 端到端實務驗收矩陣</div>
-              <div className="text-[11px] text-stone-400">5 大極端場景真實檢核</div>
+              <div className="text-[0.6875rem] text-stone-400">5 大極端場景真實檢核</div>
             </div>
           </button>
 
@@ -253,7 +253,7 @@ git push -u origin main
             <Sliders className="w-4 h-4 text-amber-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">2. 離線同步衝突裁決實驗室</div>
-              <div className="text-[11px] text-stone-400">文字追加合併 / 食安強制仲裁</div>
+              <div className="text-[0.6875rem] text-stone-400">文字追加合併 / 食安強制仲裁</div>
             </div>
           </button>
 
@@ -268,7 +268,7 @@ git push -u origin main
             <FolderArchive className="w-4 h-4 text-purple-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">3. 專案腳手架打包與匯出</div>
-              <div className="text-[11px] text-stone-400">雙儲存庫 Git 一鍵啟動</div>
+              <div className="text-[0.6875rem] text-stone-400">雙儲存庫 Git 一鍵啟動</div>
             </div>
           </button>
         </div>
@@ -297,7 +297,7 @@ git push -u origin main
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">
+                    <span className="px-2 py-0.5 rounded text-[0.625rem] font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">
                       {sc.category}
                     </span>
                     <h4 className="font-bold text-sm text-white">{sc.title}</h4>
@@ -341,7 +341,7 @@ git push -u origin main
                 </div>
 
                 {/* 驗證執行日誌 */}
-                <div className="p-3 bg-black/60 rounded-xl border border-stone-800/80 font-mono text-[11px] text-stone-400 space-y-1">
+                <div className="p-3 bg-black/60 rounded-xl border border-stone-800/80 font-mono text-[0.6875rem] text-stone-400 space-y-1">
                   {sc.verificationLog.map((log, index) => (
                     <div key={index} className="flex items-start gap-2">
                       <span className="text-stone-600 select-none">›</span>
@@ -463,7 +463,7 @@ git push -u origin main
                 </div>
                 <div>
                   <span className="text-stone-400">最終收斂值：</span>
-                  <pre className="mt-1 p-3 bg-stone-900 rounded-lg text-emerald-300 font-mono text-[11px] whitespace-pre-wrap">
+                  <pre className="mt-1 p-3 bg-stone-900 rounded-lg text-emerald-300 font-mono text-[0.6875rem] whitespace-pre-wrap">
                     {typeof conflictResult.finalValue === 'string'
                       ? conflictResult.finalValue
                       : JSON.stringify(conflictResult.finalValue, null, 2)}
@@ -520,14 +520,14 @@ git push -u origin main
               <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-white text-sm">1. farmland-diary-flutter</span>
-                  <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px]">
+                  <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 text-[0.625rem]">
                     公開 GitHub
                   </span>
                 </div>
                 <p className="text-stone-400">
                   雙平台 Flutter 客戶端，包含 Drift (SQLite) 離線資料庫、Riverpod 狀態、戶外相機 HUD、大字型無障礙主題與 GitHub Actions 自動建置 APK。
                 </p>
-                <div className="text-[11px] font-mono text-stone-500">
+                <div className="text-[0.6875rem] font-mono text-stone-500">
                   發布管道：Android APK 公開下載 / iOS App Store 準備
                 </div>
               </div>
@@ -535,14 +535,14 @@ git push -u origin main
               <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-white text-sm">2. farmland-diary-backend</span>
-                  <span className="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[10px]">
+                  <span className="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[0.625rem]">
                     私人獨立維護
                   </span>
                 </div>
                 <p className="text-stone-400">
                   FastAPI 後端、PostgreSQL + PostGIS 空間資料庫、GCS Signed URL 上傳簽署、Cloud Run 部署設定檔與閒置縮容至零規範。
                 </p>
-                <div className="text-[11px] font-mono text-stone-500">
+                <div className="text-[0.6875rem] font-mono text-stone-500">
                   部署環境：Google Cloud Run (asia-east1 臺灣彰濱機房)
                 </div>
               </div>
@@ -562,7 +562,7 @@ git push -u origin main
                     setCopiedGitCommand(true);
                     setTimeout(() => setCopiedGitCommand(false), 2000);
                   }}
-                  className="px-2.5 py-1 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded text-[11px] flex items-center gap-1.5 transition-colors"
+                  className="px-2.5 py-1 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded text-[0.6875rem] flex items-center gap-1.5 transition-colors"
                 >
                   {copiedGitCommand ? (
                     <>

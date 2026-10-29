@@ -321,7 +321,7 @@ export const Phase2DailyOperations: React.FC = () => {
             </div>
 
             {/* API 呼叫端點規格提示 */}
-            <div className="p-3 bg-stone-950 rounded-xl border border-stone-800 text-[11px] font-mono text-stone-400 flex items-center justify-between">
+            <div className="p-3 bg-stone-950 rounded-xl border border-stone-800 text-[0.6875rem] font-mono text-stone-400 flex items-center justify-between">
               <span>GET https://data.moa.gov.tw/Service/OpenData/FromM/{searchType === 'fertilizer' ? 'FertilizerData.aspx' : 'PesticideData.aspx'}</span>
               <span className="text-emerald-400">Status 200 OK (即時介接)</span>
             </div>
@@ -334,7 +334,7 @@ export const Phase2DailyOperations: React.FC = () => {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-white">{item.brandName}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
+                        <span className="text-[0.625rem] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
                           {item.licenseNo}
                         </span>
                       </div>
@@ -342,7 +342,7 @@ export const Phase2DailyOperations: React.FC = () => {
                         出品業者：{item.vendor} ｜ 品目：{item.category} ｜ 規格：{item.packageSpec}
                       </div>
                     </div>
-                    <span className="text-[10px] text-stone-400 flex items-center gap-1">
+                    <span className="text-[0.625rem] text-stone-400 flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> 官方登記有案
                     </span>
                   </div>
@@ -356,7 +356,7 @@ export const Phase2DailyOperations: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="text-[11px] text-stone-500 flex items-center justify-between pt-1">
+                  <div className="text-[0.6875rem] text-stone-500 flex items-center justify-between pt-1">
                     <span>資料來源：{item.source}</span>
                     <button
                       onClick={() => alert(`已成功引用 ${item.brandName} 規格 (${item.packageSpec}) 至農務作業資材項目！`)}
@@ -462,7 +462,7 @@ export const Phase2DailyOperations: React.FC = () => {
                       <div className="text-lg font-mono font-bold text-emerald-400">
                         {inv.totalStockQuantity} <span className="text-xs text-stone-400">{inv.unit}</span>
                       </div>
-                      <div className="text-[11px] text-stone-400">安全庫存：{inv.safetyStockThreshold} {inv.unit}</div>
+                      <div className="text-[0.6875rem] text-stone-400">安全庫存：{inv.safetyStockThreshold} {inv.unit}</div>
                     </div>
                   </div>
                 </div>
@@ -477,17 +477,17 @@ export const Phase2DailyOperations: React.FC = () => {
                   <div key={tx.id} className="bg-stone-950 p-3 rounded-xl border border-stone-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        <span className={`px-2 py-0.5 rounded text-[0.625rem] font-bold ${
                           tx.transactionType === 'PURCHASE_IN' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-blue-950 text-blue-300 border border-blue-800'
                         }`}>
                           {tx.transactionType === 'PURCHASE_IN' ? '採購入庫' : '農事作業領用扣抵'}
                         </span>
                         <span className="text-stone-300 font-medium">{tx.notes}</span>
                         {tx.linkedWorkLogId && (
-                          <span className="text-[11px] font-mono text-emerald-400">({tx.linkedWorkLogId})</span>
+                          <span className="text-[0.6875rem] font-mono text-emerald-400">({tx.linkedWorkLogId})</span>
                         )}
                       </div>
-                      <div className="text-[11px] text-stone-400 mt-1">
+                      <div className="text-[0.6875rem] text-stone-400 mt-1">
                         批號：{tx.batchNumber} ｜ 經辦人：{tx.operatorName} ｜ 時間：{tx.timestamp}
                       </div>
                     </div>
@@ -495,7 +495,7 @@ export const Phase2DailyOperations: React.FC = () => {
                       <span className={tx.quantityChange > 0 ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>
                         {tx.quantityChange > 0 ? `+${tx.quantityChange}` : tx.quantityChange} 包
                       </span>
-                      <div className="text-[10px] text-stone-500">結餘：{tx.resultingBalance} 包</div>
+                      <div className="text-[0.625rem] text-stone-500">結餘：{tx.resultingBalance} 包</div>
                     </div>
                   </div>
                 ))}
@@ -526,12 +526,12 @@ export const Phase2DailyOperations: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-white">{att.contactName}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded font-mono ${
+                    <span className={`text-[0.625rem] px-2 py-0.5 rounded font-mono ${
                       att.isFamilyLabor ? 'bg-purple-950 text-purple-300 border border-purple-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
                     }`}>
                       {att.isFamilyLabor ? '自家人內部工時估算' : '外部雇工 (現金薪資)'}
                     </span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${
+                    <span className={`text-[0.625rem] px-2 py-0.5 rounded font-bold ${
                       att.isPaid ? 'bg-stone-800 text-stone-300' : 'bg-amber-950 text-amber-300 border border-amber-800'
                     }`}>
                       {att.isPaid ? '已付清' : '應付未付'}
@@ -546,7 +546,7 @@ export const Phase2DailyOperations: React.FC = () => {
                   <div className="text-base font-mono font-bold text-emerald-400">
                     NT$ {att.totalPayableTWD.toLocaleString()}
                   </div>
-                  <div className="text-[11px] text-stone-400">
+                  <div className="text-[0.6875rem] text-stone-400">
                     {att.isPaid ? `已於 ${att.paidDate} 透過現金結清` : '待管理者審查放款'}
                   </div>
                 </div>
@@ -577,7 +577,7 @@ export const Phase2DailyOperations: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-white">{item.payloadSummary}</span>
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                    <span className={`text-[0.625rem] font-mono px-2 py-0.5 rounded border ${
                       item.syncStatus === 'SYNCED' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' :
                       item.syncStatus === 'SYNC_FAILED' ? 'bg-red-950 text-red-300 border-red-800' :
                       'bg-stone-800 text-amber-300 border-stone-700'

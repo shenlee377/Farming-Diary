@@ -116,7 +116,7 @@ export const Phase8AgriDataAndManual: React.FC = () => {
             <Globe2 className="w-4 h-4 text-emerald-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">1. 臺灣農業公用 API 中樞</div>
-              <div className="text-[11px] text-stone-400">防檢署 PHI / 20% 災損試算</div>
+              <div className="text-[0.6875rem] text-stone-400">防檢署 PHI / 20% 災損試算</div>
             </div>
           </button>
 
@@ -131,7 +131,7 @@ export const Phase8AgriDataAndManual: React.FC = () => {
             <BookOpen className="w-4 h-4 text-amber-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">2. 田間實務家庭操作手冊</div>
-              <div className="text-[11px] text-stone-400">長輩語音 / 子女審核 / 會計出貨</div>
+              <div className="text-[0.6875rem] text-stone-400">長輩語音 / 子女審核 / 會計出貨</div>
             </div>
           </button>
 
@@ -146,7 +146,7 @@ export const Phase8AgriDataAndManual: React.FC = () => {
             <FileCode className="w-4 h-4 text-purple-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">3. 全系統產物匯出中心</div>
-              <div className="text-[11px] text-stone-400">完整規格書與 OpenAPI 藍圖</div>
+              <div className="text-[0.6875rem] text-stone-400">完整規格書與 OpenAPI 藍圖</div>
             </div>
           </button>
         </div>
@@ -236,7 +236,7 @@ export const Phase8AgriDataAndManual: React.FC = () => {
                     <span className="font-bold text-sm text-white">
                       {pesticideResult.isSafeToHarvest ? '符合安全採收標準 (可採收)' : '未達安全採收期 (禁止採收)'}
                     </span>
-                    <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-black/40 text-stone-300">
+                    <span className="text-[0.6875rem] font-mono px-2 py-0.5 rounded bg-black/40 text-stone-300">
                       法定間隔: {pesticideResult.requiredIntervalDays} 天 | 已經過: {pesticideResult.daysPassed} 天
                     </span>
                   </div>
@@ -306,7 +306,7 @@ export const Phase8AgriDataAndManual: React.FC = () => {
                       ? '符合申報現金救助標準 (達 20% 門檻)'
                       : '未達 20% 救助門檻 (不符合現金救助)'}
                   </span>
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-black/40 text-stone-300">
+                  <span className="text-[0.6875rem] font-mono px-2 py-0.5 rounded bg-black/40 text-stone-300">
                     蔬菜一類基準: NT$ 44,000 / 公頃
                   </span>
                 </div>
@@ -351,7 +351,7 @@ export const Phase8AgriDataAndManual: React.FC = () => {
                   </span>
                   <div>
                     <h4 className="font-bold text-sm text-white">長輩與現場工作者</h4>
-                    <span className="text-[11px] text-stone-400">大太陽下按三下完成</span>
+                    <span className="text-[0.6875rem] text-stone-400">大太陽下按三下完成</span>
                   </div>
                 </div>
 
@@ -387,7 +387,7 @@ export const Phase8AgriDataAndManual: React.FC = () => {
                   </span>
                   <div>
                     <h4 className="font-bold text-sm text-white">返鄉青農與共同經營者</h4>
-                    <span className="text-[11px] text-stone-400">晚間 3 分鐘審定與派工</span>
+                    <span className="text-[0.6875rem] text-stone-400">晚間 3 分鐘審定與派工</span>
                   </div>
                 </div>
 
@@ -423,7 +423,7 @@ export const Phase8AgriDataAndManual: React.FC = () => {
                   </span>
                   <div>
                     <h4 className="font-bold text-sm text-white">會計與出貨管理者</h4>
-                    <span className="text-[11px] text-stone-400">市場拍賣單與現金核銷</span>
+                    <span className="text-[0.6875rem] text-stone-400">市場拍賣單與現金核銷</span>
                   </div>
                 </div>
 

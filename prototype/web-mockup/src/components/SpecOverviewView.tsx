@@ -173,7 +173,7 @@ export const SpecOverviewView: React.FC = () => {
           <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-emerald-400">問題 1：外部身分對應與 OAuth 存取權限</span>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">登入架構</span>
+              <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">登入架構</span>
             </div>
             <p className="text-xs text-stone-300 mt-2 font-medium">
               目前您手邊是否能直接提供 <code>shenlee377/chat-coffee-bot-python</code>（分支 <code>v5-Google-Cloud-Run</code>）中的 <code>docs/IOS_OAUTH.md</code> 與 <code>backend/oauth_clients.py</code> 檔案內容或脫敏截圖？
@@ -186,7 +186,7 @@ export const SpecOverviewView: React.FC = () => {
           <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-emerald-400">問題 2：核心資料庫選型決策</span>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">資料庫持久層</span>
+              <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">資料庫持久層</span>
             </div>
             <p className="text-xs text-stone-300 mt-2 font-medium">
               本報告經詳細比對，主要推薦<strong>「Cloud SQL (PostgreSQL + PostGIS) + GCS」</strong>以確保土地多對多關聯、庫存扣抵與工資財務的 ACID 交易一致性。您是否同意此推薦作為主要方案？
@@ -199,7 +199,7 @@ export const SpecOverviewView: React.FC = () => {
           <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-emerald-400">問題 3：雙平台 Client ID 與 Scheme 命名預設</span>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">應用識別</span>
+              <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">應用識別</span>
             </div>
             <p className="text-xs text-stone-300 mt-2 font-medium">
               是否同意在待定階段暫時採用建議名稱：英文識別 <code>farmland-diary</code>、Android <code>tw.farmland.diary</code>、iOS <code>tw.farmland.diary</code>、自訂 URL Scheme <code>farmlanddiary://oauth/callback</code>？
@@ -212,7 +212,7 @@ export const SpecOverviewView: React.FC = () => {
           <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-emerald-400">問題 4：農民長輩與語音回報互動優先級</span>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">使用者體驗</span>
+              <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">使用者體驗</span>
             </div>
             <p className="text-xs text-stone-300 mt-2 font-medium">
               長輩在田間回報作業時，首推「大圖示按鈕 + 語音錄音檔上傳 + 原文草稿保留」，由管理者或子女晚間登入後再進行批次確認；此流程是否符合您的家庭協作實務？
@@ -225,7 +225,7 @@ export const SpecOverviewView: React.FC = () => {
           <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-emerald-400">問題 5：巡田影像雲端品質檢核的重度運算觸發時機</span>
-              <span className="text-[11px] px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">運算與成本</span>
+              <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">運算與成本</span>
             </div>
             <p className="text-xs text-stone-300 mt-2 font-medium">
               巡田照片上傳後，雲端檢核是否僅在使用者點擊「完成巡田段落並請求檢查」時才觸發非同步 Cloud Run Job，抑或是每上傳 5 張即自動批次排程？

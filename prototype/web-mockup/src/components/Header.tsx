@@ -35,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
             本頁全部為示範資料與模擬畫面，未連接任何後端，未經建置、測試或部署驗證；頁面中的農藥間隔、救助金額等數字未經查證。正式產品為 <strong>Flutter (Android/iOS)</strong> App 與私有後端，均尚未開始實作。
           </span>
         </div>
-        <span className="hidden md:inline-block px-2 py-0.5 rounded bg-amber-900 text-amber-300 font-mono text-[11px]">
+        <span className="hidden md:inline-block px-2 py-0.5 rounded bg-amber-900 text-amber-300 font-mono text-[0.6875rem]">
           v0.1.0-spec
         </span>
       </div>

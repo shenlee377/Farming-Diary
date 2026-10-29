@@ -224,15 +224,15 @@ export const Phase6FullStackDeployment: React.FC = () => {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono font-bold text-[12px] flex items-center gap-1.5">
+                      <span className="font-mono font-bold text-xs flex items-center gap-1.5">
                         <FileCode className={`w-3.5 h-3.5 ${isSelected ? 'text-emerald-400' : 'text-stone-500'}`} />
                         {file.name}
                       </span>
-                      <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-stone-900 text-stone-400">
+                      <span className="text-[0.625rem] uppercase font-mono px-1.5 py-0.5 rounded bg-stone-900 text-stone-400">
                         {file.language}
                       </span>
                     </div>
-                    <span className="text-[11px] font-mono text-stone-500 truncate">{file.path}</span>
+                    <span className="text-[0.6875rem] font-mono text-stone-500 truncate">{file.path}</span>
                   </button>
                 );
               })}
@@ -257,7 +257,7 @@ export const Phase6FullStackDeployment: React.FC = () => {
           <div className="px-5 py-3.5 bg-stone-950 border-b border-stone-800 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-xs font-mono font-bold text-emerald-400">{currentFile.path}</span>
-              <span className="text-[11px] text-stone-500">
+              <span className="text-[0.6875rem] text-stone-500">
                 ({currentFile.content.split('\n').length} 行)
               </span>
             </div>
@@ -379,7 +379,7 @@ export const Phase6FullStackDeployment: React.FC = () => {
 
         {/* 響應視窗 */}
         <div className="bg-stone-950 border border-stone-800 rounded-xl p-4 font-mono text-xs text-stone-300">
-          <div className="flex items-center justify-between pb-2 mb-3 border-b border-stone-800 text-[11px] text-stone-500">
+          <div className="flex items-center justify-between pb-2 mb-3 border-b border-stone-800 text-[0.6875rem] text-stone-500">
             <span className="text-emerald-400 flex items-center gap-1">
               <Play className="w-3 h-3 fill-emerald-400" />
               <span>HTTP 200 OK (延遲 ~38ms)</span>

@@ -250,7 +250,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
             <div className="text-xs text-stone-400">當前模擬登入身分：</div>
             <div className="text-sm font-bold text-white flex items-center gap-2">
               <span>{currentUser === 'user-lin-01' ? '林家豪 (青農經營者 / user-lin-01)' : '外部未授權使用者 (unauthorized-user-09)'}</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded font-mono ${
+              <span className={`text-[0.625rem] px-2 py-0.5 rounded font-mono ${
                 isAuthorized ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-red-950 text-red-300 border border-red-800'
               }`}>
                 {isAuthorized ? '已授權成員' : '未授權帳號 (測試越權拒絕)'}
@@ -311,7 +311,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold text-white">{workspace.name}</h2>
-                <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
+                <span className="text-[0.6875rem] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
                   {workspace.id}
                 </span>
               </div>
@@ -457,7 +457,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                           面積：<span className="text-emerald-400 font-semibold">{f.areaHectares} 公頃</span> ｜ 計算來源：{f.areaSource}
                         </div>
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-stone-800 text-stone-300 border border-stone-700">
+                      <span className="text-[0.625rem] px-2 py-0.5 rounded font-mono bg-stone-800 text-stone-300 border border-stone-700">
                         邊界 v{f.boundaryVersion}
                       </span>
                     </div>
@@ -469,7 +469,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                       {f.landRelationship.annualRentTWD && (
                         <div><strong className="text-stone-400">租金約定：</strong>NT$ {f.landRelationship.annualRentTWD.toLocaleString()} / 年</div>
                       )}
-                      <div className="text-amber-400 font-mono text-[11px] pt-1">
+                      <div className="text-amber-400 font-mono text-[0.6875rem] pt-1">
                         [狀態標記] {f.landRelationship.verificationStatus} (自填資料，非官方地政查證)
                       </div>
                     </div>
@@ -495,7 +495,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                   <div key={s.id} className="bg-stone-900 border border-stone-800 rounded-2xl p-5 space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-emerald-400">{s.seasonCode}</span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${
+                      <span className={`text-[0.625rem] px-2 py-0.5 rounded font-bold ${
                         s.status === 'ACTIVE' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-stone-800 text-stone-400'
                       }`}>
                         {s.status === 'FALLOW' ? '休耕期' : s.status}
@@ -615,7 +615,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                         <span>{c.fullName}</span>
                         <span className="text-xs text-stone-400">({c.nickname})</span>
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-stone-800 text-amber-300 border border-stone-700">
+                      <span className="text-[0.625rem] px-2 py-0.5 rounded font-mono bg-stone-800 text-amber-300 border border-stone-700">
                         免裝 App
                       </span>
                     </div>
@@ -712,7 +712,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                           田區：{t.fieldName} ｜ 預計日期：{t.plannedDate} ｜ 集合點：{t.assemblyLocation}
                         </div>
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-blue-950 text-blue-300 border border-blue-800">
+                      <span className="text-[0.625rem] px-2 py-0.5 rounded font-mono bg-blue-950 text-blue-300 border border-blue-800">
                         {t.status}
                       </span>
                     </div>
@@ -726,7 +726,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                             <span className="text-xs text-stone-400 ml-2">工資快照：NT$ {asg.rateSnapshotTWD}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className={`text-[11px] font-mono px-2 py-0.5 rounded border ${
+                            <span className={`text-[0.6875rem] font-mono px-2 py-0.5 rounded border ${
                               asg.status === 'CONFIRMED' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' :
                               asg.status === 'CHECKED_IN' ? 'bg-blue-950 text-blue-300 border-blue-800' :
                               asg.status === 'COMPLETED' ? 'bg-purple-950 text-purple-300 border-purple-800' :
@@ -739,7 +739,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                             {asg.status === 'CONTACTED_PENDING' && (
                               <button
                                 onClick={() => handleUpdateAssignmentStatus(t.id, asg.contactId, 'ACCEPT')}
-                                className="px-2 py-1 bg-emerald-800 hover:bg-emerald-700 text-white text-[11px] rounded"
+                                className="px-2 py-1 bg-emerald-800 hover:bg-emerald-700 text-white text-[0.6875rem] rounded"
                               >
                                 對方口頭答應 (ACCEPT)
                               </button>
@@ -747,7 +747,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                             {asg.status === 'CONFIRMED' && (
                               <button
                                 onClick={() => handleUpdateAssignmentStatus(t.id, asg.contactId, 'CHECK_IN')}
-                                className="px-2 py-1 bg-blue-800 hover:bg-blue-700 text-white text-[11px] rounded"
+                                className="px-2 py-1 bg-blue-800 hover:bg-blue-700 text-white text-[0.6875rem] rounded"
                               >
                                 當日現場簽到 (CHECK_IN)
                               </button>
@@ -755,7 +755,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                             {asg.status === 'CHECKED_IN' && (
                               <button
                                 onClick={() => handleUpdateAssignmentStatus(t.id, asg.contactId, 'FINISH')}
-                                className="px-2 py-1 bg-purple-800 hover:bg-purple-700 text-white text-[11px] rounded"
+                                className="px-2 py-1 bg-purple-800 hover:bg-purple-700 text-white text-[0.6875rem] rounded"
                               >
                                 工時完成 (FINISH)
                               </button>
@@ -878,7 +878,7 @@ export const Phase1LiveWorkspace: React.FC = () => {
                           田區：{l.fieldName} ｜ 範圍：{l.workAreaDescription} ｜ 操作人：{l.operatorNames.join('、')}
                         </div>
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-emerald-950 text-emerald-300 border border-emerald-800">
+                      <span className="text-[0.625rem] px-2 py-0.5 rounded font-mono bg-emerald-950 text-emerald-300 border border-emerald-800">
                         {l.status}
                       </span>
                     </div>

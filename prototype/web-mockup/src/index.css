@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+/*
+ * 字級跟隨系統設定：
+ * - 不在 html 設定固定 px 字級，所有字級使用 rem（Tailwind text-* 皆為 rem）。
+ * - iOS Safari：-apple-system-body 會套用使用者在「設定 > 顯示與亮度 > 文字大小」的 Dynamic Type。
+ *   只在 iOS 套用（-webkit-touch-callout 僅 iOS 支援），避免 macOS Safari 縮成 13px。
+ * - Android Chrome：index.html 的 <meta name="text-scale"> 讓 rem 跟隨系統字型大小。
+ */
+@supports (font: -apple-system-body) and (-webkit-touch-callout: none) {
+  html {
+    font: -apple-system-body;
+  }
+}
+
 body {
   font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
 }

@@ -113,7 +113,7 @@ export const MilestoneSimulator: React.FC = () => {
               <button
                 key={stepNum}
                 onClick={() => setCurrentStep(stepNum)}
-                className={`p-2 rounded-lg text-left text-[11px] font-medium border transition-colors ${
+                className={`p-2 rounded-lg text-left text-[0.6875rem] font-medium border transition-colors ${
                   isCurrent
                     ? 'bg-emerald-950/80 border-emerald-500 text-emerald-200 shadow-sm'
                     : isCompleted
@@ -222,7 +222,7 @@ export const MilestoneSimulator: React.FC = () => {
             <div className="p-3 bg-stone-950 rounded-xl border border-stone-800 text-xs space-y-1.5 text-stone-400">
               <div><strong className="text-stone-300">多對多地籍關聯：</strong>雲林縣西螺鎮公館段 0451 號 (5200㎡) + 0452 號 (3300㎡)</div>
               <div><strong className="text-stone-300">土地權利狀態：</strong>承租 (陳黃阿雀祭祀公業)；租約至 2028-12-31</div>
-              <div className="text-amber-400 font-mono text-[11px]">
+              <div className="text-amber-400 font-mono text-[0.6875rem]">
                 [系統標籤] SELF_REPORTED_UNVERIFIED (自填資料，非官方地政查證)
               </div>
             </div>
@@ -309,7 +309,7 @@ export const MilestoneSimulator: React.FC = () => {
               {tasks[0]?.assignments.map((asg, idx) => (
                 <div key={idx} className="flex items-center justify-between bg-stone-900 p-2 rounded-lg">
                   <span className="text-stone-200">{asg.contactName}</span>
-                  <span className="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-800">
+                  <span className="px-2 py-0.5 rounded text-[0.6875rem] font-mono bg-emerald-950 text-emerald-300 border border-emerald-800">
                     狀態：{asg.status} (工資快照：NT$ {asg.rateSnapshotTWD})
                   </span>
                 </div>
@@ -352,7 +352,7 @@ export const MilestoneSimulator: React.FC = () => {
               <Camera className="w-4 h-4" />
               <span>現場佐證相片已上傳至私有 GCS 儲存桶</span>
             </div>
-            <div className="text-stone-400 text-[11px]">
+            <div className="text-stone-400 text-[0.6875rem]">
               gs://farmland-diary-private-bucket/workspaces/ws-tw-xiluo-001/logs/photo_01.jpg (透過限時 Signed URL 授權檢視)
             </div>
             <div className="pt-2 border-t border-stone-800 flex justify-between">
@@ -416,7 +416,7 @@ export const MilestoneSimulator: React.FC = () => {
               <AlertOctagon className="w-4 h-4" />
               步驟 8：多租戶安全防護與未授權拒絕 (Tenant Isolation Security Test)
             </h4>
-            <span className="px-2.5 py-0.5 rounded text-[11px] font-mono bg-red-950 text-red-300 border border-red-800">
+            <span className="px-2.5 py-0.5 rounded text-[0.6875rem] font-mono bg-red-950 text-red-300 border border-red-800">
               HTTP 403 Forbidden
             </span>
           </div>

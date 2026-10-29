@@ -33,6 +33,7 @@ import {
   QrCode,
   FileCheck,
 } from 'lucide-react';
+import { headingToDirection } from '../domain/inspection_ui.ts';
 
 export const Phase5ReconstructionAndReports: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'3d_pipeline' | 'ar_projection' | 'drone_telemetry' | 'official_reports'>('3d_pipeline');
@@ -299,7 +300,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
             <Box className="w-4 h-4 text-emerald-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">1. 雲端三維重建管線</div>
-              <div className="text-[11px] text-stone-400">3DGS / Nerf / COLMAP</div>
+              <div className="text-[0.6875rem] text-stone-400">3DGS / Nerf / COLMAP</div>
             </div>
           </button>
 
@@ -314,7 +315,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
             <Smartphone className="w-4 h-4 text-emerald-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">2. 實景 AR 田界投影</div>
-              <div className="text-[11px] text-stone-400">TWD97 地號相機內參疊合</div>
+              <div className="text-[0.6875rem] text-stone-400">TWD97 地號相機內參疊合</div>
             </div>
           </button>
 
@@ -329,7 +330,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
             <Plane className="w-4 h-4 text-emerald-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">3. DJI 無人機遙測校準</div>
-              <div className="text-[11px] text-stone-400">50Hz SLERP 快門時間插值</div>
+              <div className="text-[0.6875rem] text-stone-400">50Hz SLERP 快門時間插值</div>
             </div>
           </button>
 
@@ -344,7 +345,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
             <FileText className="w-4 h-4 text-emerald-400 shrink-0" />
             <div>
               <div className="font-semibold text-white">4. TAP 履歷與災損備件</div>
-              <div className="text-[11px] text-stone-400">數位簽章雜湊與證明導出</div>
+              <div className="text-[0.6875rem] text-stone-400">數位簽章雜湊與證明導出</div>
             </div>
           </button>
         </div>
@@ -488,7 +489,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
               >
                 {/* 蔬菜畦面與點雲視覺化 */}
                 <div className="w-64 h-44 bg-gradient-to-tr from-emerald-950 via-stone-900 to-emerald-900/60 border-2 border-dashed border-emerald-500/60 rounded-xl shadow-2xl p-4 flex flex-col justify-between">
-                  <div className="flex justify-between items-center text-[10px] text-emerald-300 font-mono">
+                  <div className="flex justify-between items-center text-[0.625rem] text-emerald-300 font-mono">
                     <span>SECTOR: NORTH_RIDGE_1-4</span>
                     <span>TWD97: 192340, 2631250</span>
                   </div>
@@ -497,7 +498,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                     {[1, 2, 3, 4].map((ridge) => (
                       <div key={ridge} className="flex flex-col items-center gap-1">
                         <div
-                          className={`w-10 h-16 rounded-md flex items-center justify-center text-[10px] font-mono transition-all ${
+                          className={`w-10 h-16 rounded-md flex items-center justify-center text-[0.625rem] font-mono transition-all ${
                             renderMode === 'splat'
                               ? 'bg-emerald-600/60 border border-emerald-400 text-emerald-100 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
                               : renderMode === 'mesh'
@@ -507,12 +508,12 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                         >
                           畦 {ridge}
                         </div>
-                        <span className="text-[9px] text-stone-400">高24cm</span>
+                        <span className="text-[0.5625rem] text-stone-400">高24cm</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex justify-between text-[10px] text-stone-400">
+                  <div className="flex justify-between text-[0.625rem] text-stone-400">
                     <span>公差: ±0.032m</span>
                     <span className="text-emerald-400">密度: {pointCloudDensity}%</span>
                   </div>
@@ -520,12 +521,12 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
               </div>
 
               {/* 畫面上疊加視角資訊與免責聲明 */}
-              <div className="absolute top-3 left-3 bg-stone-900/90 border border-stone-800 rounded-lg px-2.5 py-1.5 text-[11px] text-stone-300 backdrop-blur-sm">
+              <div className="absolute top-3 left-3 bg-stone-900/90 border border-stone-800 rounded-lg px-2.5 py-1.5 text-[0.6875rem] text-stone-300 backdrop-blur-sm">
                 <div>俯仰角: <span className="text-emerald-400 font-mono">{modelPitch}°</span> | 偏航角: <span className="text-emerald-400 font-mono">{modelYaw}°</span></div>
-                <div className="text-[10px] text-stone-500 mt-0.5">滑動下方控制器調整空間角度</div>
+                <div className="text-[0.625rem] text-stone-500 mt-0.5">滑動下方控制器調整空間角度</div>
               </div>
 
-              <div className="absolute bottom-3 right-3 max-w-xs bg-amber-950/90 border border-amber-800/80 rounded-lg px-2.5 py-1.5 text-[10px] text-amber-300 backdrop-blur-sm">
+              <div className="absolute bottom-3 right-3 max-w-xs bg-amber-950/90 border border-amber-800/80 rounded-lg px-2.5 py-1.5 text-[0.625rem] text-amber-300 backdrop-blur-sm">
                 <ShieldCheck className="w-3.5 h-3.5 inline mr-1 text-amber-400" />
                 視覺輔助模型，不具《國土測繪法》界址效力
               </div>
@@ -584,7 +585,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-sm text-white">{job.fieldName}</span>
-                      <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
+                      <span className="px-2 py-0.5 rounded text-[0.625rem] bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
                         {job.algorithm}
                       </span>
                       <span className="text-xs text-stone-400">({job.cropName})</span>
@@ -598,7 +599,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                       <span>大小: <strong className="text-stone-200">{job.fileSizeMb} MB</strong></span>
                     </div>
 
-                    <p className="text-[11px] text-amber-400/90 mt-1">
+                    <p className="text-[0.6875rem] text-amber-400/90 mt-1">
                       {job.legalNotice}
                     </p>
                   </div>
@@ -656,7 +657,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <span className="flex items-center gap-1.5 text-emerald-400">
                     <Compass className="w-4 h-4 animate-spin-slow" />
-                    <span>鏡頭朝向: <strong>{cameraHeading}° (東)</strong></span>
+                    <span>鏡頭朝向: <strong>{cameraHeading}°（{headingToDirection(cameraHeading)}）</strong></span>
                   </span>
                   <span>相機高度: <strong>1.2m</strong></span>
                   <span>重投影誤差: <strong className="text-emerald-300">±0.08m</strong></span>
@@ -690,7 +691,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                     {/* 界標旗標或圓標 */}
                     <div className="flex flex-col items-center">
                       <div
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold shadow-lg border backdrop-blur-md flex items-center gap-1.5 ${
+                        className={`px-2.5 py-1 rounded-lg text-[0.625rem] font-bold shadow-lg border backdrop-blur-md flex items-center gap-1.5 ${
                           point.isOccludedByObstacle && showObstacleMask
                             ? 'bg-amber-950/80 border-amber-500/60 text-amber-200 opacity-60'
                             : 'bg-emerald-950/90 border-emerald-400 text-emerald-200'
@@ -698,7 +699,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                       >
                         <MapPin className="w-3 h-3 text-emerald-400" />
                         <span>{point.cadastreCode.split(' ')[0]}</span>
-                        <span className="text-[9px] text-stone-300">({point.distanceToCameraMeters}m)</span>
+                        <span className="text-[0.5625rem] text-stone-300">({point.distanceToCameraMeters}m)</span>
                       </div>
 
                       {/* 垂直指示線指向地面標石 */}
@@ -739,7 +740,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                   <span className="text-emerald-400 font-bold mr-1">現場辨認：</span>
                   第 1~4 畦在綠色虛線以西為本農場承租範圍；東北角標石被鄰田玉米遮擋已自動提示。
                 </div>
-                <span className="text-[11px] text-stone-400 font-mono">
+                <span className="text-[0.6875rem] text-stone-400 font-mono">
                   計算: reprojectCadastrePoint()
                 </span>
               </div>
@@ -803,7 +804,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
               <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60">
                 <span className="text-stone-400 text-xs block mb-1">無人機型號</span>
                 <span className="text-white font-bold text-sm">DJI Mavic 3 Enterprise</span>
-                <span className="text-[11px] text-emerald-400 block mt-1">RTK 高精度模組</span>
+                <span className="text-[0.6875rem] text-emerald-400 block mt-1">RTK 高精度模組</span>
               </div>
 
               <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60">
@@ -812,19 +813,19 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   <span>RTK_FIXED (±1.8 cm)</span>
                 </span>
-                <span className="text-[11px] text-stone-400 block mt-1">地面相對高度 45.0m</span>
+                <span className="text-[0.6875rem] text-stone-400 block mt-1">地面相對高度 45.0m</span>
               </div>
 
               <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60">
                 <span className="text-stone-400 text-xs block mb-1">快門時間延遲補償</span>
                 <span className="text-amber-400 font-bold text-sm font-mono">+4.2 ms (毫秒)</span>
-                <span className="text-[11px] text-stone-400 block mt-1">消除 8.4 cm 飛行位移偏誤</span>
+                <span className="text-[0.6875rem] text-stone-400 block mt-1">消除 8.4 cm 飛行位移偏誤</span>
               </div>
 
               <div className="p-4 bg-stone-800/40 rounded-xl border border-stone-700/60">
                 <span className="text-stone-400 text-xs block mb-1">有效曝光張數</span>
                 <span className="text-white font-bold text-sm">84 張 (100% 同步)</span>
-                <span className="text-[11px] text-stone-400 block mt-1">飛行航時 18.5 分鐘</span>
+                <span className="text-[0.6875rem] text-stone-400 block mt-1">飛行航時 18.5 分鐘</span>
               </div>
             </div>
 
@@ -908,19 +909,19 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
               <div className="bg-stone-800/40 p-3.5 rounded-xl border border-stone-700/50">
                 <span className="text-stone-400 block mb-1">栽培作物與品系</span>
                 <span className="text-white font-bold">{traceabilityPackage.cropName}</span>
-                <span className="text-[11px] text-stone-400 block mt-1">面積: {traceabilityPackage.cultivationAreaHectares} 公頃</span>
+                <span className="text-[0.6875rem] text-stone-400 block mt-1">面積: {traceabilityPackage.cultivationAreaHectares} 公頃</span>
               </div>
 
               <div className="bg-stone-800/40 p-3.5 rounded-xl border border-stone-700/50">
                 <span className="text-stone-400 block mb-1">地籍地號登記</span>
                 <span className="text-white font-bold">{traceabilityPackage.cadastreParcels.join('、')}</span>
-                <span className="text-[11px] text-emerald-400 block mt-1">已關聯地籍圖界址</span>
+                <span className="text-[0.6875rem] text-emerald-400 block mt-1">已關聯地籍圖界址</span>
               </div>
 
               <div className="bg-stone-800/40 p-3.5 rounded-xl border border-stone-700/50">
                 <span className="text-stone-400 block mb-1">產銷履歷追溯碼 (Lot)</span>
                 <span className="text-emerald-400 font-mono font-bold">{traceabilityPackage.harvestBatchSummary.lotTraceCode}</span>
-                <span className="text-[11px] text-stone-400 block mt-1">採收量: {traceabilityPackage.harvestBatchSummary.totalHarvestKg} kg</span>
+                <span className="text-[0.6875rem] text-stone-400 block mt-1">採收量: {traceabilityPackage.harvestBatchSummary.totalHarvestKg} kg</span>
               </div>
             </div>
 
@@ -970,19 +971,19 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
               <div className="bg-stone-800/40 p-3.5 rounded-xl border border-stone-700/50">
                 <span className="text-stone-400 block mb-1">受損田區與地號</span>
                 <span className="text-white font-bold">{disasterPackage.affectedFieldNames[0]}</span>
-                <span className="text-[11px] text-stone-400 block mt-1">{disasterPackage.cadastreParcels[0]}</span>
+                <span className="text-[0.6875rem] text-stone-400 block mt-1">{disasterPackage.cadastreParcels[0]}</span>
               </div>
 
               <div className="bg-stone-800/40 p-3.5 rounded-xl border border-stone-700/50">
                 <span className="text-stone-400 block mb-1">農家自估受損率</span>
                 <span className="text-amber-400 font-bold text-sm">{disasterPackage.claimedDamagePercentage}% (達20%救助門檻)</span>
-                <span className="text-[11px] text-stone-400 block mt-1">初估損失: NT$ {disasterPackage.totalLossEstimatedTWD.toLocaleString()}</span>
+                <span className="text-[0.6875rem] text-stone-400 block mt-1">初估損失: NT$ {disasterPackage.totalLossEstimatedTWD.toLocaleString()}</span>
               </div>
 
               <div className="bg-stone-800/40 p-3.5 rounded-xl border border-stone-700/50">
                 <span className="text-stone-400 block mb-1">官方浮水印相片</span>
                 <span className="text-white font-bold">{disasterPackage.fieldInspectionAfterPhotos.length} 張完整空間簽章</span>
-                <span className="text-[11px] text-emerald-400 block mt-1">經緯度 + TWD97 + 時間</span>
+                <span className="text-[0.6875rem] text-emerald-400 block mt-1">經緯度 + TWD97 + 時間</span>
               </div>
             </div>
 
@@ -990,7 +991,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
             <div className="p-4 bg-stone-950 rounded-xl border border-stone-800 text-xs mb-6">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-stone-300 font-bold">勘災照片空間浮水印比對展示</span>
-                <span className="text-[11px] text-stone-500 font-mono">符合公所現地勘查備件標準</span>
+                <span className="text-[0.6875rem] text-stone-500 font-mono">符合公所現地勘查備件標準</span>
               </div>
 
               <div className="relative rounded-lg overflow-hidden border border-stone-800 h-48 bg-stone-900 flex items-end p-3">
@@ -1000,7 +1001,7 @@ export const Phase5ReconstructionAndReports: React.FC = () => {
                     backgroundImage: `url(${disasterPackage.fieldInspectionAfterPhotos[0].photoUrl})`,
                   }}
                 />
-                <div className="relative z-10 bg-black/80 text-amber-300 font-mono text-[11px] px-3 py-1.5 rounded-lg border border-amber-500/40 backdrop-blur-sm">
+                <div className="relative z-10 bg-black/80 text-amber-300 font-mono text-[0.6875rem] px-3 py-1.5 rounded-lg border border-amber-500/40 backdrop-blur-sm">
                   {disasterPackage.fieldInspectionAfterPhotos[0].watermarkText}
                 </div>
               </div>

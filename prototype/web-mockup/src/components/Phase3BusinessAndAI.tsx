@@ -300,7 +300,7 @@ export const Phase3BusinessAndAI: React.FC = () => {
                       <div className="text-lg font-mono font-bold text-emerald-400">
                         {h.netWeightKg} <span className="text-xs text-stone-400">公斤 (淨重)</span>
                       </div>
-                      <div className="text-[11px] text-stone-500">毛重：{h.grossWeightKg} 公斤</div>
+                      <div className="text-[0.6875rem] text-stone-500">毛重：{h.grossWeightKg} 公斤</div>
                     </div>
                   </div>
 
@@ -309,14 +309,14 @@ export const Phase3BusinessAndAI: React.FC = () => {
                       <span className="font-bold text-emerald-300 flex items-center gap-1.5">
                         <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 採前安全採收期查驗：合格通過
                       </span>
-                      <span className="text-stone-400 text-[11px]">
+                      <span className="text-stone-400 text-[0.6875rem]">
                         檢查人：{h.preHarvestCheck.inspectorName} ({h.preHarvestCheck.checkedAt})
                       </span>
                     </div>
                     <div className="text-stone-300">
                       查驗依據：{h.preHarvestCheck.notes}
                     </div>
-                    <div className="text-stone-400 text-[11px] pt-1 border-t border-stone-800/80">
+                    <div className="text-stone-400 text-[0.6875rem] pt-1 border-t border-stone-800/80">
                       作業人員：{h.operatorNames.join('、')} ｜ 備註：{h.notes}
                     </div>
                   </div>
@@ -346,7 +346,7 @@ export const Phase3BusinessAndAI: React.FC = () => {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-white">{s.buyerName}</span>
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold ${
+                        <span className={`text-[0.625rem] px-2 py-0.5 rounded font-mono font-bold ${
                           s.isFullySettled ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'
                         }`}>
                           {s.isFullySettled ? '已收到現金結清' : '尚未收到現金 (待對帳)'}
@@ -407,7 +407,7 @@ export const Phase3BusinessAndAI: React.FC = () => {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-white">{anom.title}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">
+                        <span className="text-[0.625rem] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">
                           {anom.category}
                         </span>
                       </div>
@@ -467,7 +467,7 @@ export const Phase3BusinessAndAI: React.FC = () => {
                     <div className="p-3.5 bg-stone-900 rounded-xl border border-stone-800 space-y-1.5 text-xs">
                       <div className="flex items-center justify-between">
                         <strong className="text-emerald-400">1. 政府農業天然災害救助</strong>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 font-mono">
+                        <span className="text-[0.625rem] px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 font-mono">
                           {dis.governmentReliefStatus}
                         </span>
                       </div>
@@ -477,7 +477,7 @@ export const Phase3BusinessAndAI: React.FC = () => {
                     <div className="p-3.5 bg-stone-900 rounded-xl border border-stone-800 space-y-1.5 text-xs">
                       <div className="flex items-center justify-between">
                         <strong className="text-blue-400">2. 商業農業保險理賠 (獨立保單)</strong>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-mono">
+                        <span className="text-[0.625rem] px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-mono">
                           {dis.insuranceClaimStatus}
                         </span>
                       </div>
@@ -485,7 +485,7 @@ export const Phase3BusinessAndAI: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="p-2.5 bg-amber-950/30 rounded-xl border border-amber-900/60 text-[11px] text-amber-300">
+                  <div className="p-2.5 bg-amber-950/30 rounded-xl border border-amber-900/60 text-[0.6875rem] text-amber-300">
                     {dis.officialNotes}
                   </div>
                 </div>
@@ -533,7 +533,7 @@ export const Phase3BusinessAndAI: React.FC = () => {
                 <div key={msg.id} className="bg-stone-950 border border-stone-800 rounded-xl p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-stone-800 pb-2">
                     <span className="text-xs font-bold text-emerald-400">問題：{msg.prompt}</span>
-                    <span className="text-[11px] text-stone-500">{msg.timestamp}</span>
+                    <span className="text-[0.6875rem] text-stone-500">{msg.timestamp}</span>
                   </div>
 
                   <div className="space-y-3 text-xs">
@@ -598,7 +598,7 @@ export const Phase3BusinessAndAI: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="text-[10px] text-stone-500 pt-1 border-t border-stone-800/60">
+                  <div className="text-[0.625rem] text-stone-500 pt-1 border-t border-stone-800/60">
                     【農事安全守則】AI 助理之推論僅供現場觀察輔助，不得作為正式植物病理確診或法定用藥處方。任何藥劑使用請依農藥登記資料庫為準。
                   </div>
                 </div>
