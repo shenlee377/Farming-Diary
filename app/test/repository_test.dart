@@ -531,4 +531,18 @@ void main() {
       throwsA(isA<RestoreException>()),
     );
   });
+
+  test('語音回報存為 audio 媒體', () async {
+    final field = await repo.createField(name: '北田');
+    final voice = File('${tmp.path}/v.m4a')
+      ..writeAsBytesSync(List.filled(128, 3));
+    final report = await repo.submitReport(
+      fieldId: field.id,
+      photos: [NewPhoto(voice.path, DateTime(2026, 11, 2))],
+    );
+    final media = await repo.watchMedia('report', report.id).first;
+    expect(media.single.kind, 'audio');
+    expect(media.single.mime, 'audio/mp4');
+    expect(media.single.localPath, endsWith('.m4a'));
+  });
 }

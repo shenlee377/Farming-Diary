@@ -218,6 +218,19 @@ class RecordView {
   const RecordView(this.record, this.field, this.inputs);
 }
 
+const _imageMime = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.heic': 'image/heic',
+};
+const _audioMime = {
+  '.m4a': 'audio/mp4',
+  '.aac': 'audio/aac',
+  '.wav': 'audio/wav',
+};
+
+/// 要加入的媒體檔（照片或語音，依副檔名判斷）。
 class NewPhoto {
   final String sourcePath;
   final DateTime capturedAt;
@@ -1154,10 +1167,8 @@ class FarmRepository {
       ownerKind: ownerKind,
       ownerId: ownerId,
       localPath: dest,
-      kind: 'photo',
-      mime: ext == '.png'
-          ? 'image/png'
-          : (ext == '.heic' ? 'image/heic' : 'image/jpeg'),
+      kind: _audioMime.containsKey(ext) ? 'audio' : 'photo',
+      mime: _audioMime[ext] ?? _imageMime[ext] ?? 'image/jpeg',
       sizeBytes: bytes.length,
       sha256: sha256.convert(bytes).toString(),
       capturedAt: photo.capturedAt,

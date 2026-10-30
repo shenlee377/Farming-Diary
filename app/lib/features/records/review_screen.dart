@@ -11,6 +11,7 @@ import '../../core/db/database.dart';
 import '../../core/repository.dart';
 import '../../domain/labels.dart';
 import '../../domain/state_machines.dart';
+import '../reports/voice_widgets.dart';
 
 final _reportProvider = StreamProvider.autoDispose.family<ReportView?, String>(
   (ref, id) => ref.watch(repositoryProvider).watchReport(id),
@@ -90,10 +91,29 @@ class ReviewScreen extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Text('資材原話：「${r.rawQuantityText}」', style: text.bodyLarge),
               ],
+              AsyncView(
+                media,
+                builder: (all) {
+                  final voices = all.where((m) => m.kind == 'audio').toList();
+                  if (voices.isEmpty) return const SizedBox.shrink();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SectionTitle('語音'),
+                      for (final (i, m) in voices.indexed)
+                        VoiceClipTile(
+                          path: m.localPath,
+                          label: '語音 ${i + 1}・${formatDateTime(m.capturedAt)}',
+                        ),
+                    ],
+                  );
+                },
+              ),
               const SectionTitle('照片'),
               AsyncView(
                 media,
-                builder: (list) {
+                builder: (all) {
+                  final list = all.where((m) => m.kind == 'photo').toList();
                   if (list.isEmpty) {
                     return const EmptyHint('沒有照片', icon: Icons.photo);
                   }

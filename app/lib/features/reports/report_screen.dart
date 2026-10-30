@@ -11,6 +11,7 @@ import '../../core/db/database.dart';
 import '../../core/location.dart';
 import '../../core/repository.dart';
 import '../../domain/state_machines.dart';
+import 'voice_widgets.dart';
 
 /// 現場回報（長輩最短路徑）：拍照（可略過）→ 送出。其他欄位都可以不填。
 ///
@@ -30,6 +31,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   final _text = TextEditingController();
   final _quantity = TextEditingController();
   final List<NewPhoto> _photos = [];
+  final List<(NewPhoto, Duration)> _voices = [];
   PesticideStatus _pesticide = PesticideStatus.unknown;
   bool _sending = false;
 
@@ -84,7 +86,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
             rawText: _text.text,
             rawQuantityText: _quantity.text,
             pesticideClaim: _pesticide,
-            photos: _photos,
+            photos: [..._photos, for (final v in _voices) v.$1],
           ),
       success: '已送出，存在手機，等管理者確認',
     );
@@ -102,7 +104,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
       ),
       body: PageBody(
         children: [
-          Text('拍張照片就可以送出，文字都可以不填。', style: text.bodyLarge),
+          Text('拍張照片或按住說話就可以送出，文字都可以不填。', style: text.bodyLarge),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -156,6 +158,22 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
               ),
             ),
           ],
+          const SizedBox(height: 12),
+          HoldToTalkButton(
+            onRecorded: (path, length) => setState(
+              () => _voices.add((NewPhoto(path, DateTime.now()), length)),
+            ),
+          ),
+          for (final (i, v) in _voices.indexed)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: VoiceClipTile(
+                key: ValueKey(v.$1.sourcePath),
+                path: v.$1.sourcePath,
+                label: '語音 ${i + 1}（${v.$2.inSeconds} 秒）',
+                onDelete: () => setState(() => _voices.removeAt(i)),
+              ),
+            ),
           const SizedBox(height: 16),
           TextField(
             controller: _text,
@@ -163,7 +181,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
             maxLines: 6,
             decoration: const InputDecoration(
               labelText: '做了什麼、發生什麼事（可不填）',
-              helperText: '可以按鍵盤上的麥克風用說的',
+              helperText: '也可以按鍵盤上的麥克風，把話轉成文字',
             ),
           ),
           const SizedBox(height: 16),
