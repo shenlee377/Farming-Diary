@@ -24,6 +24,7 @@
 | [AUTH_INTEGRATION](docs/AUTH_INTEGRATION.md) | 咖啡廳 OAuth 分支核對結果與整合設計 |
 | [SECURITY_AND_DATA](docs/SECURITY_AND_DATA.md) | 權限、雲端安全、資料生命週期、備份、刪除 |
 | [COST_MODEL](docs/COST_MODEL.md) | 成本來源、用量假設、上限策略 |
+| [PLATFORM_STRATEGY](docs/PLATFORM_STRATEGY.md) | Android App 與 Chrome 網頁的分工與各自最佳化 |
 | [DESIGN_SYSTEM](docs/DESIGN_SYSTEM.md) | 品牌方向、暫定圖示、色彩與字級、元件規則 |
 | [ROADMAP](docs/ROADMAP.md) | 里程碑、檔案結構草案、第一個端到端驗收情境 |
 | [DECISIONS](docs/DECISIONS.md) | 決策紀錄、識別碼候選、現有 repo 稽核 |
