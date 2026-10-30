@@ -1786,6 +1786,19 @@ class FarmRepository {
     return query.watchSingle().map((row) => row.read(count) ?? 0);
   }
 
+  /// outbox 各狀態筆數（pending／sent／conflict／rejected／failed），所有工作空間合計。
+  Stream<Map<String, int>> watchOutboxCounts() {
+    final count = db.outbox.seq.count();
+    final query = db.selectOnly(db.outbox)
+      ..addColumns([db.outbox.status, count])
+      ..groupBy([db.outbox.status]);
+    return query.watch().map(
+      (rows) => {
+        for (final r in rows) r.read(db.outbox.status)!: r.read(count) ?? 0,
+      },
+    );
+  }
+
   Stream<int> watchPendingUploads() {
     final count = db.mediaAssets.id.count();
     final query = db.selectOnly(db.mediaAssets)

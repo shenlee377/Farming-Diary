@@ -7,8 +7,8 @@
 | 項目 | 狀態 |
 | --- | --- |
 | 架構與計畫（階段 0） | 文件草案完成；資料庫、repo 分割、授權條款已確認（見 [DECISIONS.md](docs/DECISIONS.md)） |
-| 正式 Flutter App（Android／iOS） | M1 本機版已寫完（[`app/`](app/README.md)）：資料存手機、可獨立使用；單元與畫面測試通過；Android／iOS 原生編譯由 CI 驗證；**尚未在實機上測試**，雲端同步與正式登入未接 |
-| 私有後端 | **尚未開始**（獨立私有 repo，不在本 repo） |
+| 正式 Flutter App（Android／iOS） | M1 已寫完（[`app/`](app/README.md)）：資料存手機、可獨立使用；同步客戶端依 API 契約完成；42 個測試通過；Android APK 與 iOS 編譯由 CI 驗證；**尚未在實機上測試**；正式登入未接 |
+| 私有後端 | **尚未開始**：API 契約已定（[API_CONTRACT](docs/API_CONTRACT.md)）；私有 repo 需由你建立（本工作階段無權建立） |
 | 咖啡廳 OAuth 串接 | **未串接**；已完成程式碼分析 |
 | 建置、測試、部署、上架 | App 有 CI（分析、測試、APK、iOS 編譯）；部署與上架未進行 |
 
@@ -25,6 +25,7 @@
 | [SECURITY_AND_DATA](docs/SECURITY_AND_DATA.md) | 權限、雲端安全、資料生命週期、備份、刪除 |
 | [COST_MODEL](docs/COST_MODEL.md) | 成本來源、用量假設、上限策略 |
 | [PLATFORM_STRATEGY](docs/PLATFORM_STRATEGY.md) | Android App 與 Chrome 網頁的分工與各自最佳化 |
+| [API_CONTRACT](docs/API_CONTRACT.md) | App 與後端 API 契約 v1（認證、同步、上傳） |
 | [app/README](app/README.md) | App 已完成功能、尚未完成清單、開發方式 |
 | [DESIGN_SYSTEM](docs/DESIGN_SYSTEM.md) | 品牌方向、暫定圖示、色彩與字級、元件規則 |
 | [ROADMAP](docs/ROADMAP.md) | 里程碑、檔案結構草案、第一個端到端驗收情境 |

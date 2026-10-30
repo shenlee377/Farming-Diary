@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/sync/sync_controller.dart';
 import '../fields/fields_screen.dart';
 import '../more/more_screen.dart';
 import '../records/records_screen.dart';
@@ -29,7 +30,9 @@ class _HomeShellState extends State<HomeShell> {
       const MoreScreen(),
     ];
     return Scaffold(
-      body: IndexedStack(index: _index, children: pages),
+      body: AutoSync(
+        child: IndexedStack(index: _index, children: pages),
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: _go,

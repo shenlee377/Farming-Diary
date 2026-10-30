@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
-import '../../app/theme.dart';
 import '../../app/widgets.dart';
 import '../../domain/labels.dart';
 import '../contacts/contacts_screen.dart';
 import 'backup_actions.dart';
+import 'sync_card.dart';
 
 final _workspacesProvider = FutureProvider.autoDispose((ref) {
   ref.watch(sessionProvider);
@@ -19,10 +19,7 @@ class MoreScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(sessionProvider).value!;
-    final pending = ref.watch(pendingOutboxProvider).value ?? 0;
-    final uploads = ref.watch(pendingUploadsProvider).value ?? 0;
     final workspaces = ref.watch(_workspacesProvider);
-    final text = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(title: const Text('更多')),
@@ -63,24 +60,17 @@ class MoreScreen extends ConsumerWidget {
           ),
 
           const SectionTitle('同步與備份'),
+          const SyncCard(),
+          const SizedBox(height: 8),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.cloud_off, color: context.colors.neutral),
-                      const SizedBox(width: 8),
-                      Expanded(child: Text('雲端同步尚未開通', style: text.titleSmall)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '$pending 筆變更、$uploads 張照片存在這支手機，等伺服器完成後會自動上傳。'
-                    '換手機或刪除 App 前，請先匯出備份。',
-                  ),
+                  Text('備份', style: Theme.of(context).textTheme.titleSmall),
+                  const SizedBox(height: 4),
+                  const Text('把整個農場（資料＋照片＋語音）存成一個檔案，可存到雲端硬碟或傳給自己。'),
                   const SizedBox(height: 12),
                   FilledButton.icon(
                     onPressed: () => exportBackup(context, ref),

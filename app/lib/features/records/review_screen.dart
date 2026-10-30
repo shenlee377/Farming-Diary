@@ -101,10 +101,19 @@ class ReviewScreen extends ConsumerWidget {
                     children: [
                       const SectionTitle('語音'),
                       for (final (i, m) in voices.indexed)
-                        VoiceClipTile(
-                          path: m.localPath,
-                          label: '語音 ${i + 1}・${formatDateTime(m.capturedAt)}',
-                        ),
+                        m.localPath.isEmpty
+                            ? Card(
+                                child: ListTile(
+                                  leading: const Icon(Icons.cloud_download),
+                                  title: Text('語音 ${i + 1}'),
+                                  subtitle: const Text('在雲端，下次同步時下載'),
+                                ),
+                              )
+                            : VoiceClipTile(
+                                path: m.localPath,
+                                label:
+                                    '語音 ${i + 1}・${formatDateTime(m.capturedAt)}',
+                              ),
                     ],
                   );
                 },
@@ -125,27 +134,43 @@ class ReviewScreen extends ConsumerWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            GestureDetector(
-                              onTap: () => showDialog<void>(
-                                context: context,
-                                builder: (_) => Dialog(
-                                  child: InteractiveViewer(
-                                    child: Image.file(File(m.localPath)),
+                            if (m.localPath.isEmpty)
+                              const SizedBox.square(
+                                dimension: 140,
+                                child: Card(
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.cloud_download),
+                                        Text('同步後下載'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            else
+                              GestureDetector(
+                                onTap: () => showDialog<void>(
+                                  context: context,
+                                  builder: (_) => Dialog(
+                                    child: InteractiveViewer(
+                                      child: Image.file(File(m.localPath)),
+                                    ),
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    File(m.localPath),
+                                    width: 140,
+                                    height: 140,
+                                    fit: BoxFit.cover,
+                                    semanticLabel:
+                                        '回報照片 ${formatDateTime(m.capturedAt)}',
                                   ),
                                 ),
                               ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.file(
-                                  File(m.localPath),
-                                  width: 140,
-                                  height: 140,
-                                  fit: BoxFit.cover,
-                                  semanticLabel:
-                                      '回報照片 ${formatDateTime(m.capturedAt)}',
-                                ),
-                              ),
-                            ),
                             const SizedBox(height: 4),
                             StatusChip.upload(
                               UploadStatus.parse(m.uploadStatus),

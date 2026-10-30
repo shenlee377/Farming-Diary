@@ -5,6 +5,7 @@ import '../../app/providers.dart';
 import '../../app/theme.dart';
 import '../../app/widgets.dart';
 import '../../core/repository.dart';
+import '../../core/sync/sync_controller.dart';
 import '../../domain/state_machines.dart';
 import '../fields/field_detail_screen.dart';
 import '../inspection/inspection_camera_screen.dart';
@@ -48,6 +49,7 @@ class HomeScreen extends ConsumerWidget {
     final needsInfo = ref.watch(_myNeedsInfoProvider);
     final fields = ref.watch(fieldsProvider);
     final pending = ref.watch(pendingOutboxProvider).value ?? 0;
+    final sync = ref.watch(syncControllerProvider);
     final text = Theme.of(context).textTheme;
     final canReview = session.role == 'owner' || session.role == 'manager';
     final today = DateTime.now();
@@ -60,16 +62,22 @@ class HomeScreen extends ConsumerWidget {
             '${session.profile.displayName}，${_greeting()}',
             style: text.displaySmall,
           ),
-          if (pending > 0) ...[
+          if (pending > 0 && (!sync.configured || sync.lastError != null)) ...[
             const SizedBox(height: 12),
             Card(
               child: ListTile(
                 leading: Icon(
-                  Icons.phone_android,
-                  color: context.colors.neutral,
+                  sync.configured ? Icons.sync_problem : Icons.phone_android,
+                  color: sync.configured
+                      ? context.colors.warning
+                      : context.colors.neutral,
                 ),
                 title: Text('$pending 筆變更存在手機'),
-                subtitle: const Text('雲端同步尚未開通，資料不會遺失；可到「更多」匯出備份。'),
+                subtitle: Text(
+                  sync.configured
+                      ? '暫時無法同步，會自動再試；資料不會遺失。'
+                      : '雲端同步尚未開通，資料不會遺失；可到「更多」匯出備份。',
+                ),
                 onTap: () => onOpenTab(4),
               ),
             ),

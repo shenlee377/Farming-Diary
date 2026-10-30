@@ -5,6 +5,8 @@ import 'package:drift/native.dart';
 import 'package:farming_diary/app/app.dart';
 import 'package:farming_diary/app/providers.dart';
 import 'package:farming_diary/core/db/database.dart';
+import 'package:farming_diary/core/sync/api_client.dart';
+import 'package:farming_diary/core/sync/sync_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -44,6 +46,7 @@ void main() {
           overrides: [
             databaseProvider.overrideWithValue(db),
             mediaDirProvider.overrideWithValue(mediaDir),
+            tokenStoreProvider.overrideWithValue(MemoryTokenStore()),
           ],
           child: const FarmingDiaryApp(),
         ),
@@ -113,8 +116,8 @@ void main() {
       await tester.tap(find.text('更多').last);
       await settle();
       expect(find.text('雲端同步尚未開通'), findsOneWidget);
-      expect(find.text('匯出備份（資料＋照片）'), findsOneWidget);
-      expect(find.text('從備份還原'), findsOneWidget);
+      expect(find.text('匯出備份（資料＋照片）', skipOffstage: false), findsOneWidget);
+      expect(find.text('從備份還原', skipOffstage: false), findsOneWidget);
 
       expect(tester.takeException(), isNull);
 

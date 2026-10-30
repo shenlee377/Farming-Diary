@@ -18,6 +18,8 @@
 | D-012 | 2026-10-30 | 權限不以 Google Play 審查為限制（Android 另有 APK）；記錄田界可於螢幕關閉時續錄 | 已確認（2026-10-30） | SECURITY_AND_DATA §7 |
 | D-013 | 2026-10-30 | M1 App 先以「本機優先」可獨立使用：資料存手機 SQLite，所有寫入進 outbox；後端完成後再接同步。登入先用本機 dev 身分 | 提議 | 後端（D-003）與咖啡廳 OAuth（V1）尚未就緒 |
 | D-014 | 2026-10-30 | 暫用 applicationId／Bundle ID `io.github.shenlee377.farmingdiary`（GitHub 帳號擁有的命名空間），正式發布前可依 D-008 更換 | 提議 | 不可使用不屬於你的網域 |
+| D-015 | 2026-10-30 | App 與後端以 API_CONTRACT v1 溝通：outbox 命令以 command_id 冪等、拉取以 cursor、媒體走 Signed URL；權杖存系統安全儲存 | 提議 | 後端實作時如需修改，App 與契約一起改 |
+| D-016 | 2026-10-30 | 備份格式：單一 zip（data.json＋media/），還原成新農場、拒絕重複還原 | 已實作 | app/lib/core/backup.dart |
 
 ## D-008 識別碼候選（未查證可用性與商標）
 

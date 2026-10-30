@@ -10,6 +10,7 @@ import 'package:path/path.dart' as p;
 
 import 'db/database.dart';
 import 'repository.dart';
+import 'sync/entities.dart';
 
 const backupFormat = 'farming-diary-export';
 
@@ -127,22 +128,6 @@ Future<RestoreResult> restoreBackup({
             ),
           );
 
-      Future<void> load<T extends Table, D extends Insertable<D>>(
-        String key,
-        String entity,
-        TableInfo<T, D> table,
-        D Function(Map<String, dynamic>) fromJson,
-        String Function(D) idOf,
-      ) async {
-        for (final raw
-            in (data[key] as List? ?? const []).cast<Map<String, dynamic>>()) {
-          final row = fromJson(raw);
-          await db.into(table).insert(row);
-          await log(entity, idOf(row), raw);
-          rows++;
-        }
-      }
-
       await db.into(db.workspaces).insert(workspace);
       await db
           .into(db.memberships)
@@ -155,113 +140,15 @@ Future<RestoreResult> restoreBackup({
             ),
             mode: InsertMode.insertOrReplace,
           );
-      await load('fields', 'field', db.fields, Field.fromJson, (r) => r.id);
-      await load(
-        'fieldBoundaryVersions',
-        'field_boundary_version',
-        db.fieldBoundaryVersions,
-        FieldBoundaryVersion.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'landParcels',
-        'land_parcel',
-        db.landParcels,
-        LandParcel.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'fieldParcels',
-        'field_parcel',
-        db.fieldParcels,
-        FieldParcel.fromJson,
-        (r) => '${r.fieldId}:${r.parcelId}',
-      );
-      await load(
-        'landRelations',
-        'land_relation',
-        db.landRelations,
-        LandRelation.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'cropSeasons',
-        'crop_season',
-        db.cropSeasons,
-        CropSeason.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'contacts',
-        'contact',
-        db.contacts,
-        Contact.fromJson,
-        (r) => r.id,
-      );
-      await load('tasks', 'task', db.tasks, Task.fromJson, (r) => r.id);
-      await load(
-        'assignments',
-        'assignment',
-        db.assignments,
-        Assignment.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'assignmentEvents',
-        'assignment_event',
-        db.assignmentEvents,
-        AssignmentEvent.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'workReports',
-        'work_report',
-        db.workReports,
-        WorkReport.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'workRecords',
-        'work_record',
-        db.workRecords,
-        WorkRecord.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'workRecordInputs',
-        'work_record_input',
-        db.workRecordInputs,
-        WorkRecordInput.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'recordRevisions',
-        'record_revision',
-        db.recordRevisions,
-        RecordRevision.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'inspectionSessions',
-        'inspection_session',
-        db.inspectionSessions,
-        InspectionSession.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'inspectionFrames',
-        'inspection_frame',
-        db.inspectionFrames,
-        InspectionFrame.fromJson,
-        (r) => r.id,
-      );
-      await load(
-        'reshootTasks',
-        'reshoot_task',
-        db.reshootTasks,
-        ReshootTask.fromJson,
-        (r) => r.id,
-      );
+      for (final spec in syncEntities) {
+        for (final raw
+            in (data[spec.backupKey] as List? ?? const [])
+                .cast<Map<String, dynamic>>()) {
+          await spec.applyRemote(db, raw);
+          await log(spec.entity, spec.idOfJson(raw), raw);
+          rows++;
+        }
+      }
 
       for (final raw
           in (data['mediaAssets'] as List? ?? const [])
