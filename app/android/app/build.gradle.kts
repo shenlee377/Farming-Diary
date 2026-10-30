@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "io.github.shenlee377.farmingdiary"
-    compileSdk = flutter.compileSdkVersion
+    // permission_handler_android 需要以 API 37 編譯（向下相容；targetSdk 仍為 Flutter 預設）
+    compileSdk = maxOf(flutter.compileSdkVersion, 37)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
