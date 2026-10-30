@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../app/theme.dart';
 import '../../app/widgets.dart';
+import '../more/backup_actions.dart';
 
 /// 第一次開啟：建立本機身分與農場（工作空間）。
 ///
@@ -83,6 +84,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               FilledButton(
                 onPressed: _saving ? null : _submit,
                 child: Text(_saving ? '建立中…' : '開始使用'),
+              ),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: _saving
+                    ? null
+                    : () {
+                        if (_name.text.trim().isEmpty) {
+                          showMessage(context, '請先填你的稱呼，再選擇備份檔');
+                          return;
+                        }
+                        pickAndRestore(context, ref, displayName: _name.text);
+                      },
+                icon: const Icon(Icons.settings_backup_restore),
+                label: const Text('換手機或重裝？從備份還原'),
               ),
               const SizedBox(height: 24),
               Card(

@@ -51,6 +51,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   crypto: ^3.0.8
+  archive: ^4.5.2
+  file_selector: ^1.1.0
 
 dev_dependencies:
   flutter_test:

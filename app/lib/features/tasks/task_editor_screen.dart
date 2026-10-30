@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../../app/widgets.dart';
+import '../../core/db/database.dart';
 import '../../domain/labels.dart';
 import '../fields/field_editor_screen.dart';
 
@@ -28,11 +29,13 @@ Future<DateTime?> pickDateTime(
   return DateTime(date.year, date.month, date.day, time.hour, time.minute);
 }
 
-/// 新增工作：田區、工作內容、時間、需要幾個人；其他放「更多資料」。
+/// 新增或修改工作：田區、工作內容、時間、需要幾個人；其他放「更多資料」。
+/// 修改時不改田區與時間（時間請用「改期」，才會提醒已答應的人重新確認）。
 class TaskEditorScreen extends ConsumerStatefulWidget {
   final String? initialFieldId;
+  final Task? existing;
 
-  const TaskEditorScreen({super.key, this.initialFieldId});
+  const TaskEditorScreen({super.key, this.initialFieldId, this.existing});
 
   @override
   ConsumerState<TaskEditorScreen> createState() => _TaskEditorScreenState();
@@ -40,15 +43,19 @@ class TaskEditorScreen extends ConsumerStatefulWidget {
 
 class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _title = TextEditingController();
-  final _meetPlace = TextEditingController();
-  final _notes = TextEditingController();
-  late String? _fieldId = widget.initialFieldId;
-  String? _seasonId;
-  String _workType = 'weeding';
+  late final _title = TextEditingController(text: widget.existing?.title);
+  late final _meetPlace = TextEditingController(
+    text: widget.existing?.meetPlace,
+  );
+  late final _notes = TextEditingController(text: widget.existing?.notes);
+  late String? _fieldId = widget.existing?.fieldId ?? widget.initialFieldId;
+  late String? _seasonId = widget.existing?.seasonId;
+  late String _workType = widget.existing?.workType ?? 'weeding';
   DateTime? _plannedStart;
-  DateTime? _meetAt;
-  int _headcount = 0;
+  late DateTime? _meetAt = widget.existing?.meetAt;
+  late int _headcount = widget.existing?.headcountNeeded ?? 0;
+
+  bool get _editing => widget.existing != null;
   bool _saving = false;
 
   @override
@@ -66,24 +73,35 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
       return;
     }
     setState(() => _saving = true);
+    final repo = ref.read(repositoryProvider);
+    final title = _title.text.trim().isEmpty
+        ? workTypeLabel(_workType)
+        : _title.text;
     final ok = await runAction(
       context,
-      () => ref
-          .read(repositoryProvider)
-          .createTask(
-            fieldId: _fieldId!,
-            seasonId: _seasonId,
-            title: _title.text.trim().isEmpty
-                ? workTypeLabel(_workType)
-                : _title.text,
-            workType: _workType,
-            plannedStart: _plannedStart,
-            meetAt: _meetAt,
-            meetPlace: _meetPlace.text,
-            headcountNeeded: _headcount,
-            notes: _notes.text,
-          ),
-      success: '已新增工作',
+      () => _editing
+          ? repo.updateTask(
+              widget.existing!.id,
+              title: title,
+              workType: _workType,
+              seasonId: _seasonId,
+              meetAt: _meetAt,
+              meetPlace: _meetPlace.text,
+              headcountNeeded: _headcount,
+              notes: _notes.text,
+            )
+          : repo.createTask(
+              fieldId: _fieldId!,
+              seasonId: _seasonId,
+              title: title,
+              workType: _workType,
+              plannedStart: _plannedStart,
+              meetAt: _meetAt,
+              meetPlace: _meetPlace.text,
+              headcountNeeded: _headcount,
+              notes: _notes.text,
+            ),
+      success: _editing ? '已儲存' : '已新增工作',
     );
     if (!mounted) return;
     setState(() => _saving = false);
@@ -97,7 +115,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
         ? null
         : ref.watch(seasonsProvider(_fieldId));
     return Scaffold(
-      appBar: AppBar(title: const Text('新增工作')),
+      appBar: AppBar(title: Text(_editing ? '修改工作' : '新增工作')),
       body: Form(
         key: _formKey,
         child: AsyncView(
@@ -128,10 +146,12 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                     for (final f in list)
                       DropdownMenuItem(value: f.id, child: Text(f.name)),
                   ],
-                  onChanged: (v) => setState(() {
-                    _fieldId = v;
-                    _seasonId = null;
-                  }),
+                  onChanged: _editing
+                      ? null
+                      : (v) => setState(() {
+                          _fieldId = v;
+                          _seasonId = null;
+                        }),
                   validator: (v) => v == null ? '請選擇田區' : null,
                 ),
                 const SizedBox(height: 16),
@@ -153,21 +173,29 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                OutlinedButton.icon(
-                  onPressed: () async {
-                    final picked = await pickDateTime(
-                      context,
-                      initial: _plannedStart,
-                    );
-                    if (picked != null) setState(() => _plannedStart = picked);
-                  },
-                  icon: const Icon(Icons.event),
-                  label: Text(
-                    _plannedStart == null
-                        ? '選擇日期時間（不選則存為草稿）'
-                        : '時間：${formatDateTime(_plannedStart)}',
+                if (_editing)
+                  Text(
+                    '時間：${formatDateTime(widget.existing!.plannedStart)}（要改時間請在工作頁按「改期」）',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  )
+                else
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final picked = await pickDateTime(
+                        context,
+                        initial: _plannedStart,
+                      );
+                      if (picked != null) {
+                        setState(() => _plannedStart = picked);
+                      }
+                    },
+                    icon: const Icon(Icons.event),
+                    label: Text(
+                      _plannedStart == null
+                          ? '選擇日期時間（不選則存為草稿）'
+                          : '時間：${formatDateTime(_plannedStart)}',
+                    ),
                   ),
-                ),
                 const SizedBox(height: 16),
                 Text(
                   '需要幾個人幫忙（不含自己）',
@@ -267,7 +295,7 @@ class _TaskEditorScreenState extends ConsumerState<TaskEditorScreen> {
                 const SizedBox(height: 16),
                 FilledButton(
                   onPressed: _saving ? null : _save,
-                  child: const Text('建立工作'),
+                  child: Text(_editing ? '儲存修改' : '建立工作'),
                 ),
               ],
             );

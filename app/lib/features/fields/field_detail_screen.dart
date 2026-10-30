@@ -12,6 +12,7 @@ import '../../domain/geo.dart';
 import '../../domain/labels.dart';
 import '../../domain/state_machines.dart';
 import '../inspection/inspection_camera_screen.dart';
+import '../inspection/inspection_session_screen.dart';
 import '../reports/report_screen.dart';
 import '../tasks/task_editor_screen.dart';
 import 'boundary_preview.dart';
@@ -508,19 +509,16 @@ class _FieldDetail extends ConsumerWidget {
                             '${inspectionStatusLabels[s.status] ?? s.status}・保留 ${s.keptFrames} 張，略過 ${s.skippedFrames} 次',
                           ),
                           trailing: s.status == 'reshoot_required'
-                              ? const Text('去補拍')
-                              : null,
-                          onTap: s.status == 'reshoot_required'
-                              ? () => _push(
-                                  context,
-                                  InspectionCameraScreen(
-                                    fieldId: field.id,
-                                    fieldName: field.name,
-                                    resumeSessionId: s.id,
-                                  ),
-                                  fullscreen: true,
-                                )
-                              : null,
+                              ? const Text('需補拍')
+                              : const Icon(Icons.chevron_right),
+                          onTap: () => _push(
+                            context,
+                            InspectionSessionScreen(
+                              fieldId: field.id,
+                              fieldName: field.name,
+                              sessionId: s.id,
+                            ),
+                          ),
                         ),
                       ),
                     ),

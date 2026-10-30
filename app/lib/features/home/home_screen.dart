@@ -10,6 +10,7 @@ import '../fields/field_detail_screen.dart';
 import '../inspection/inspection_camera_screen.dart';
 import '../records/review_screen.dart';
 import '../tasks/task_card.dart';
+import '../tasks/task_detail_screen.dart';
 
 final _waitingReportsProvider = StreamProvider.autoDispose<List<ReportView>>(
   (ref) => ref
@@ -95,6 +96,52 @@ class HomeScreen extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: TaskCard(t),
+                    ),
+                ],
+              );
+            },
+          ),
+          AsyncView(
+            tasks,
+            builder: (list) {
+              final tomorrow = DateTime(today.year, today.month, today.day + 1);
+              final weekEnd = tomorrow.add(const Duration(days: 7));
+              final upcoming = list.where((t) {
+                final start = t.task.plannedStart?.toLocal();
+                return start != null &&
+                    !start.isBefore(tomorrow) &&
+                    start.isBefore(weekEnd);
+              }).toList();
+              if (upcoming.isEmpty) return const SizedBox.shrink();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SectionTitle('接下來 7 天'),
+                  for (final t in upcoming)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Card(
+                        child: ListTile(
+                          title: Text(
+                            '${formatDate(t.task.plannedStart)} ${formatTime(t.task.plannedStart)}・${t.task.title}',
+                          ),
+                          subtitle: Text(
+                            [
+                              t.field.name,
+                              t.status.label,
+                              if (t.task.headcountNeeded > 0)
+                                '已答應 ${t.acceptedCount}／${t.task.headcountNeeded} 人',
+                            ].join('・'),
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  TaskDetailScreen(taskId: t.task.id),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                 ],
               );

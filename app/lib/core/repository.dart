@@ -104,6 +104,20 @@ class SessionStore {
     });
   }
 
+  /// 只建立本機身分（例：重裝後先建立身分再從備份還原）。
+  Future<Profile> ensureProfile(String displayName) async {
+    final existing = await db.select(db.profiles).getSingleOrNull();
+    if (existing != null) return existing;
+    final profile = Profile(
+      id: newId(),
+      displayName: displayName.trim(),
+      identityKind: 'local_dev',
+      createdAt: now(),
+    );
+    await db.into(db.profiles).insert(profile);
+    return profile;
+  }
+
   Future<Workspace> createWorkspace(String name, {Profile? profile}) async {
     profile ??= await db.select(db.profiles).getSingle();
     final ws = Workspace(
@@ -845,6 +859,47 @@ class FarmRepository {
       await _log('task', task.id, task.toJson());
     });
     return task;
+  }
+
+  /// 修改工作內容。時間要用「改期」（會通知受影響的人重新確認），這裡不改時間。
+  /// 需要人數變動時，依已答應人數重新判斷「找人中／人手已齊」。
+  Future<void> updateTask(
+    String taskId, {
+    required String title,
+    required String workType,
+    String? seasonId,
+    DateTime? meetAt,
+    String meetPlace = '',
+    required int headcountNeeded,
+    String notes = '',
+  }) async {
+    await db.transaction(() async {
+      final task = await _getTask(taskId);
+      final updated = task.copyWith(
+        title: title.trim(),
+        workType: workType,
+        seasonId: Value(seasonId),
+        meetAt: Value(meetAt),
+        meetPlace: meetPlace.trim(),
+        headcountNeeded: headcountNeeded,
+        notes: notes.trim(),
+        version: task.version + 1,
+        updatedAt: now(),
+        updatedBy: _me,
+      );
+      await db.update(db.tasks).replace(updated);
+      await _log('task', task.id, updated.toJson());
+      final status = TaskStatus.parse(updated.status);
+      final filled = isStaffingFilled(
+        acceptedCount: await _acceptedCount(task.id),
+        headcountNeeded: headcountNeeded,
+      );
+      if (status == TaskStatus.staffing && filled) {
+        await _writeTask(updated, status.apply(TaskAction.staffingFilled));
+      } else if (status == TaskStatus.ready && !filled && headcountNeeded > 0) {
+        await _writeTask(updated, status.apply(TaskAction.someoneCancelled));
+      }
+    });
   }
 
   Future<Task> _writeTask(

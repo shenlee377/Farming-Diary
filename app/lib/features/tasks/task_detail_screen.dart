@@ -159,7 +159,21 @@ class _TaskDetail extends ConsumerWidget {
         status != TaskStatus.rescheduled;
 
     return Scaffold(
-      appBar: AppBar(title: Text(task.title)),
+      appBar: AppBar(
+        title: Text(task.title),
+        actions: [
+          if (status.isOpen)
+            IconButton(
+              tooltip: '修改工作',
+              icon: const Icon(Icons.edit),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => TaskEditorScreen(existing: task),
+                ),
+              ),
+            ),
+        ],
+      ),
       body: PageBody(
         children: [
           Text(

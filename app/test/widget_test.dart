@@ -113,7 +113,8 @@ void main() {
       await tester.tap(find.text('更多').last);
       await settle();
       expect(find.text('雲端同步尚未開通'), findsOneWidget);
-      expect(find.text('匯出備份（資料）'), findsOneWidget);
+      expect(find.text('匯出備份（資料＋照片）'), findsOneWidget);
+      expect(find.text('從備份還原'), findsOneWidget);
 
       expect(tester.takeException(), isNull);
 

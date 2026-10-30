@@ -1,17 +1,12 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../app/providers.dart';
 import '../../app/theme.dart';
 import '../../app/widgets.dart';
 import '../../domain/labels.dart';
 import '../contacts/contacts_screen.dart';
+import 'backup_actions.dart';
 
 final _workspacesProvider = FutureProvider.autoDispose((ref) {
   ref.watch(sessionProvider);
@@ -20,39 +15,6 @@ final _workspacesProvider = FutureProvider.autoDispose((ref) {
 
 class MoreScreen extends ConsumerWidget {
   const MoreScreen({super.key});
-
-  Future<void> _export(
-    BuildContext context,
-    WidgetRef ref, {
-    required bool withPhotos,
-  }) async {
-    await runAction(context, () async {
-      final repo = ref.read(repositoryProvider);
-      final data = await repo.exportWorkspace();
-      final dir = await getTemporaryDirectory();
-      final stamp = DateTime.now().toIso8601String().replaceAll(
-        RegExp(r'[:.]'),
-        '-',
-      );
-      final file = File(p.join(dir.path, 'farming-diary-$stamp.json'));
-      await file.writeAsString(
-        const JsonEncoder.withIndent('  ').convert(data),
-      );
-      final files = [XFile(file.path, mimeType: 'application/json')];
-      if (withPhotos) {
-        for (final m
-            in (data['mediaAssets'] as List).cast<Map<String, dynamic>>()) {
-          final path = m['localPath'] as String;
-          if (File(path).existsSync()) {
-            files.add(XFile(path, mimeType: m['mime'] as String?));
-          }
-        }
-      }
-      await SharePlus.instance.share(
-        ShareParams(files: files, subject: '農田日記備份 $stamp'),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -121,15 +83,15 @@ class MoreScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   FilledButton.icon(
-                    onPressed: () => _export(context, ref, withPhotos: false),
+                    onPressed: () => exportBackup(context, ref),
                     icon: const Icon(Icons.ios_share),
-                    label: const Text('匯出備份（資料）'),
+                    label: const Text('匯出備份（資料＋照片）'),
                   ),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
-                    onPressed: () => _export(context, ref, withPhotos: true),
-                    icon: const Icon(Icons.photo_library),
-                    label: const Text('匯出備份（資料＋照片）'),
+                    onPressed: () => pickAndRestore(context, ref),
+                    icon: const Icon(Icons.settings_backup_restore),
+                    label: const Text('從備份還原'),
                   ),
                 ],
               ),

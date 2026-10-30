@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+
+import '../core/backup.dart';
 
 import '../core/db/database.dart';
 import '../core/repository.dart';
@@ -44,6 +47,20 @@ class SessionController extends AsyncNotifier<Session?> {
   Future<void> switchWorkspace(String workspaceId) async {
     await _store.switchWorkspace(workspaceId);
     state = AsyncData(await _store.load());
+  }
+
+  /// 從備份 zip 還原成一個農場並切換過去；第一次使用時一併建立本機身分。
+  Future<RestoreResult> restore(String zipPath, {String? displayName}) async {
+    if (displayName != null) await _store.ensureProfile(displayName);
+    final result = await restoreBackup(
+      db: ref.read(databaseProvider),
+      store: _store,
+      zipPath: zipPath,
+      mediaDir: ref.read(mediaDirProvider),
+      workDir: await getTemporaryDirectory(),
+    );
+    state = AsyncData(await _store.load());
+    return result;
   }
 
   Future<void> rename(String displayName) async {

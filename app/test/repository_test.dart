@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
+import 'package:farming_diary/core/backup.dart';
 import 'package:farming_diary/core/db/database.dart';
 import 'package:farming_diary/core/repository.dart';
 import 'package:farming_diary/domain/blur.dart';
@@ -402,5 +403,132 @@ void main() {
     );
     expect(await outboxCount(), before);
     expect((await repo.watchTask(task.id).first)!.status, TaskStatus.scheduled);
+  });
+
+  test('修改工作需要人數後重新判斷人手', () async {
+    final field = await repo.createField(name: '北田');
+    final c = await repo.saveContact(name: '阿吉叔');
+    final task = await repo.createTask(
+      fieldId: field.id,
+      title: '採收',
+      workType: 'harvest',
+      plannedStart: DateTime(2026, 11, 5),
+      headcountNeeded: 2,
+    );
+    await repo.applyTaskAction(task.id, TaskAction.startStaffing);
+    await repo.addAssignment(task.id, c.id);
+    final a = (await repo.watchAssignments(task.id).first).single.assignment;
+    await repo.applyAssignmentAction(a.id, AssignmentAction.accept);
+    expect((await repo.watchTask(task.id).first)!.status, TaskStatus.staffing);
+
+    await repo.updateTask(
+      task.id,
+      title: '採收高麗菜',
+      workType: 'harvest',
+      headcountNeeded: 1,
+    );
+    var t = (await repo.watchTask(task.id).first)!;
+    expect(t.task.title, '採收高麗菜');
+    expect(t.status, TaskStatus.ready);
+
+    await repo.updateTask(
+      task.id,
+      title: '採收高麗菜',
+      workType: 'harvest',
+      headcountNeeded: 3,
+    );
+    t = (await repo.watchTask(task.id).first)!;
+    expect(t.status, TaskStatus.staffing);
+  });
+
+  test('備份 → 在另一支手機還原：資料與照片完整', () async {
+    final field = await repo.createField(name: '北田');
+    final parcel = await repo.linkParcel(field.id, '新安段 0124-0000');
+    await repo.addLandRelation(
+      parcelId: parcel.id,
+      partyName: '王先生',
+      kind: 'lessee',
+    );
+    final photo = File('${tmp.path}/p.jpg')
+      ..writeAsBytesSync(List.generate(500, (i) => i % 256));
+    final report = await repo.submitReport(
+      fieldId: field.id,
+      rawText: '除草',
+      photos: [NewPhoto(photo.path, DateTime(2026, 11, 2))],
+    );
+    await repo.confirmReport(
+      report.id,
+      summary: '除草',
+      pesticideStatus: PesticideStatus.confirmedNone,
+    );
+
+    final zip = await createBackup(repo, tmp);
+    expect(zip.existsSync(), isTrue);
+
+    // 另一支手機：全新資料庫
+    final db2 = AppDatabase(NativeDatabase.memory());
+    addTearDown(db2.close);
+    final store2 = SessionStore(db2);
+    await store2.ensureProfile('阿明');
+    final media2 = Directory('${tmp.path}/media2');
+    final result = await restoreBackup(
+      db: db2,
+      store: store2,
+      zipPath: zip.path,
+      mediaDir: media2,
+      workDir: tmp,
+    );
+    expect(result.workspace.name, '林家田');
+    expect(result.photos, 1);
+
+    final s2 = (await store2.load())!;
+    expect(s2.workspaceId, session.workspaceId);
+    expect(s2.role, 'owner');
+    final repo2 = FarmRepository(db2, s2, media2);
+    final fields = await repo2.watchFields().first;
+    expect(fields.single.name, '北田');
+    final parcels = await repo2.watchParcelsForField(field.id).first;
+    expect(parcels.single.relations.single.partyName, '王先生');
+    final records = await repo2.watchRecords().first;
+    expect(
+      records.single.record.pesticideStatus,
+      PesticideStatus.confirmedNone.name,
+    );
+    final media = await repo2.watchMedia('report', report.id).first;
+    expect(
+      File(media.single.localPath).readAsBytesSync(),
+      photo.readAsBytesSync(),
+    );
+    expect(
+      await repo2.watchPendingOutbox().first,
+      greaterThan(0),
+      reason: '還原的資料也要排入同步',
+    );
+
+    // 同一個農場不能再還原一次
+    await expectLater(
+      restoreBackup(
+        db: db2,
+        store: store2,
+        zipPath: zip.path,
+        mediaDir: media2,
+        workDir: tmp,
+      ),
+      throwsA(isA<RestoreException>()),
+    );
+  });
+
+  test('不是備份檔時清楚拒絕', () async {
+    final bogus = File('${tmp.path}/bogus.zip')..writeAsStringSync('not a zip');
+    await expectLater(
+      restoreBackup(
+        db: db,
+        store: SessionStore(db),
+        zipPath: bogus.path,
+        mediaDir: tmp,
+        workDir: tmp,
+      ),
+      throwsA(isA<RestoreException>()),
+    );
   });
 }
