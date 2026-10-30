@@ -14,7 +14,10 @@
 | D-008 | 2026-10-20 | 識別碼 | 提議（待你決定） | 見下方候選 |
 | D-009 | 2026-10-20 | 公開 repo 授權條款：Apache-2.0 | 已確認（2026-10-20） | 根目錄 `LICENSE` 為 apache.org 官方原文。只涵蓋本公開 repo，不涵蓋私有後端 |
 | D-010 | 2026-10-20 | 現有 AI Studio 原型搬到 `prototype/web-mockup/` 並移除未驗證的完成宣稱；公開 repo 的 `backend/` 刪除 | 已確認並執行（2026-10-20） | 舊 `backend/` 仍存在於 Git 歷史（commit `9dde1fe` 以前），經檢查沒有真實秘密 |
-| D-011 | 2026-10-30 | 平台分工：Android App 負責田間採集（巡田、拍照回報、離線）；Chrome 網頁負責免安裝入口與電腦版管理（田界編輯、報表、確認回報、分享檢視），兩邊分開最佳化 | 提議 | PLATFORM_STRATEGY；網頁技術（Flutter Web 或 React）與開始時程待決定 |
+| D-011 | 2026-10-30 | 平台：先做 Flutter Android／iOS App；Chrome 網頁暫緩（分工規劃保留於 PLATFORM_STRATEGY） | 已確認（2026-10-30） | 主力在田間，長輩不會開網頁下田 |
+| D-012 | 2026-10-30 | 權限不以 Google Play 審查為限制（Android 另有 APK）；記錄田界可於螢幕關閉時續錄 | 已確認（2026-10-30） | SECURITY_AND_DATA §7 |
+| D-013 | 2026-10-30 | M1 App 先以「本機優先」可獨立使用：資料存手機 SQLite，所有寫入進 outbox；後端完成後再接同步。登入先用本機 dev 身分 | 提議 | 後端（D-003）與咖啡廳 OAuth（V1）尚未就緒 |
+| D-014 | 2026-10-30 | 暫用 applicationId／Bundle ID `io.github.shenlee377.farmingdiary`（GitHub 帳號擁有的命名空間），正式發布前可依 D-008 更換 | 提議 | 不可使用不屬於你的網域 |
 
 ## D-008 識別碼候選（未查證可用性與商標）
 

@@ -1,0 +1,74 @@
+name: App
+
+on:
+  push:
+    paths: ['app/**', '.github/workflows/app.yml']
+  pull_request:
+    paths: ['app/**', '.github/workflows/app.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: app
+
+env:
+  FLUTTER_VERSION: '3.47.9'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - name: Generated code is up to date
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          git diff --exit-code -- lib
+      - run: dart format --output=none --set-exit-if-changed lib test
+      - run: flutter analyze
+      - run: flutter test
+
+  android:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      # 尚未設定正式簽署金鑰（不放進 repo）；此 APK 以 debug 金鑰簽署，只供測試安裝
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: farming-diary-apk
+          path: app/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+
+  ios:
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      # 只驗證可以編譯；簽署與 TestFlight 需要 Apple 開發者帳號（ROADMAP M1-G）
+      - run: flutter build ios --release --no-codesign

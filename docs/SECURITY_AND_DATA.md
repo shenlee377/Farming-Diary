@@ -93,14 +93,14 @@
 | 能力 | Android | iOS | 何時要求 | 拒絕時 |
 | --- | --- | --- | --- | --- |
 | 相機（巡田、拍照回報） | `CAMERA`（執行期要求） | `NSCameraUsageDescription` | 第一次進入巡田或拍照 | 畫面說明用途＋「到設定開啟」按鈕；回報仍可只寫文字 |
-| 定位（照片座標、巡田軌跡） | `ACCESS_FINE_LOCATION`＋`ACCESS_COARSE_LOCATION`，僅「使用 App 時」 | `NSLocationWhenInUseUsageDescription` | 第一次巡田 | 只給大略位置時照片標「定位精度低」；完全拒絕時改由使用者手選田區 |
+| 定位（照片座標、巡田軌跡、沿田邊走記錄田界） | `ACCESS_FINE_LOCATION`＋`ACCESS_COARSE_LOCATION`；螢幕關閉時續錄用前景服務（`FOREGROUND_SERVICE_LOCATION`，常駐通知「正在記錄田界」） | `NSLocationWhenInUseUsageDescription`＋`UIBackgroundModes: location` | 第一次巡田或記錄田界 | 只給大略位置時照片標「定位精度低」；完全拒絕時改由使用者手選田區 |
 | 羅盤（補拍轉向引導） | 不需權限（感測器） | 不需權限 | — | 裝置無磁力計時隱藏轉向箭頭，只顯示文字說明 |
 | 麥克風（語音回報） | `RECORD_AUDIO` | `NSMicrophoneUsageDescription` | 第一次按語音輸入 | 改用文字輸入 |
 | 選既有照片 | 系統 Photo Picker，**不申請** `READ_MEDIA_IMAGES` | PHPicker，**不申請**相簿權限 | — | — |
 | 通知（工作提醒） | Android 13+ `POST_NOTIFICATIONS` | 通知授權 | 使用者開啟提醒時 | App 內「等我確認」列表仍可看到 |
 | 背景上傳 | WorkManager（不需額外權限）；不常駐前景服務 | `BGTaskScheduler`／背景 URLSession | — | 下次開 App 時續傳 |
 
-- **不申請背景定位**：巡田在 App 前景、相機畫面開著時進行，前景定位即足夠（提議，取代原先「背景定位僅在巡田功能」的保留；Google Play 對背景定位審查嚴格，省掉可簡化上架）。
+- **螢幕關閉時繼續記錄**（2026-10-30 你決定：不以 Google Play 審查為限制，Android 另有 APK 發布）：沿田邊走記錄田界時，使用者可開啟「螢幕關閉也繼續記錄」。實作採前景服務＋常駐通知，由使用者在 App 內按下開始，因此「使用 App 時」權限即可運作；若日後有不經使用者啟動的背景記錄需求，再申請 `ACCESS_BACKGROUND_LOCATION`（「一律允許」）並在 App 內說明。
 - **不申請儲存空間權限**：照片與離線資料存在 App 私有目錄。
 - 系統字級：Flutter 透過 `MediaQuery.textScalerOf` 直接讀取 Android「字型大小」與 iOS Dynamic Type，不需要權限；規則見 [DESIGN_SYSTEM](DESIGN_SYSTEM.md) §5。
 - 權限說明文字由 App 先用白話解釋（例如「巡田需要相機，用來拍田區照片」），再跳系統對話框。
@@ -108,5 +108,5 @@
 ## 8. 發布前檢查（各平台，需依當期官方要求）
 
 - iOS：隱私營養標籤、`PrivacyInfo.xcprivacy`、權限用途字串（相機、麥克風、定位、相簿）、帳號刪除入口、第三方登入相關審查指南。
-- Android：Data safety 表單、權限最小化（依 §7，定位只在使用中、不申請背景定位）、目標 API level。
+- Android：Data safety 表單、權限依 §7（定位前景服務需在 Play 申報用途；APK 發布不受此限）、目標 API level。
 - 隱私權政策與服務條款頁面（需正式網域）。

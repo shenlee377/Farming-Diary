@@ -1,6 +1,6 @@
 # 農田日記 — Android App 與 Chrome 網頁分開最佳化（PLATFORM_STRATEGY）
 
-> 狀態：提議（D-011）。尚未實作；瀏覽器 API 支援度需在開工時依當期 Chrome 版本再確認。
+> 狀態：D-011 已確認（2026-10-30）：**先做 Android／iOS App，Chrome 網頁暫緩**。本文的網頁部分保留作日後參考；瀏覽器 API 支援度需在開工時依當期 Chrome 版本再確認。
 > 最後更新：2026-10-30
 
 兩個平台共用同一個後端 API、同一套權限（後端強制），但**不追求同一個畫面兩邊一模一樣**。依各自強項分工，各自最佳化。
@@ -30,7 +30,7 @@
 | 字級 | `MediaQuery.textScaler` 直接讀 Android「字型大小」（含 Android 14 起的非線性放大到 200%）；規則見 DESIGN_SYSTEM §5 |
 | 低階手機 | 裝置能力自動分級（Tier 1～3）；AAB 依裝置拆分下載，控制安裝大小 |
 | 觸覺回饋 | 拍到一張就震動，戶外看不清螢幕也知道 |
-| 權限 | 見 SECURITY_AND_DATA §7：用到才問、只在前景、不申請背景定位與儲存空間 |
+| 權限 | 見 SECURITY_AND_DATA §7：用到才問；記錄田界可選螢幕關閉續錄（前景服務）；不申請儲存空間 |
 | 發布 | Google Play（AAB）＋ GitHub 提供 APK |
 
 ## 3. Chrome 網頁最佳化
