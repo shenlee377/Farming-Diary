@@ -73,6 +73,8 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
             return (
               <button
                 key={item.id}
+                type="button"
+                aria-current={isActive ? 'page' : undefined}
                 onClick={() => setActiveTab(item.id)}
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                   isActive

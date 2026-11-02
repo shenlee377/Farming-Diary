@@ -1,0 +1,25 @@
+name: prototype
+
+on:
+  push:
+    paths: ['prototype/web-mockup/**', '.github/workflows/prototype.yml']
+  pull_request:
+    paths: ['prototype/web-mockup/**', '.github/workflows/prototype.yml']
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: prototype/web-mockup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: prototype/web-mockup/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build

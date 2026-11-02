@@ -27,6 +27,7 @@
 | [DESIGN_SYSTEM](docs/DESIGN_SYSTEM.md) | 品牌方向、暫定圖示、色彩與字級、元件規則 |
 | [ROADMAP](docs/ROADMAP.md) | 里程碑、檔案結構草案、第一個端到端驗收情境 |
 | [DECISIONS](docs/DECISIONS.md) | 決策紀錄、識別碼候選、現有 repo 稽核 |
+| [OPTIMIZATION_BACKLOG](docs/OPTIMIZATION_BACKLOG.md) | 最佳化與待辦：邏輯問題、UI 建議、待補功能 |
 
 ## 授權
 

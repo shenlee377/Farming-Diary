@@ -18,6 +18,11 @@ npm install
 npm run dev
 ```
 
-`.env.example` 中的 `GEMINI_API_KEY` 是 AI Studio 原型用的佔位值；請勿把真實金鑰提交到 repo。
+原型不呼叫任何外部 API，不需要 `.env`。未使用的 AI Studio 依賴（`@google/genai`、`express`、`dotenv` 等）與 `.env.example` 已移除。
+
+```bash
+npm test      # 領域純函數單元測試（node --test）
+npm run lint  # TypeScript 型別檢查
+```
 
 此原型不再維護，正式設計以 `docs/` 為準。

@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { Header } from './components/Header.tsx';
-import { SpecOverviewView } from './components/SpecOverviewView.tsx';
-import { ArchitectureView } from './components/ArchitectureView.tsx';
-import { DomainModelView } from './components/DomainModelView.tsx';
-import { StateMachinesView } from './components/StateMachinesView.tsx';
-import { MilestoneSimulator } from './components/MilestoneSimulator.tsx';
-import { CostAndSecurityView } from './components/CostAndSecurityView.tsx';
-import { BrandDesignView } from './components/BrandDesignView.tsx';
-
-import { Phase1LiveWorkspace } from './components/Phase1LiveWorkspace.tsx';
-import { Phase2DailyOperations } from './components/Phase2DailyOperations.tsx';
-import { Phase3BusinessAndAI } from './components/Phase3BusinessAndAI.tsx';
-import { Phase4InspectionQualityLoop } from './components/Phase4InspectionQualityLoop.tsx';
-import { Phase5ReconstructionAndReports } from './components/Phase5ReconstructionAndReports.tsx';
-import { Phase6FullStackDeployment } from './components/Phase6FullStackDeployment.tsx';
-import { Phase7AcceptanceAndExporter } from './components/Phase7AcceptanceAndExporter.tsx';
-import { Phase8AgriDataAndManual } from './components/Phase8AgriDataAndManual.tsx';
+// 各頁籤按需載入，避免首次開啟就下載全部頁面（原本單一 bundle 約 550 KB）
+const SpecOverviewView = lazy(() => import('./components/SpecOverviewView.tsx').then((m) => ({ default: m.SpecOverviewView })));
+const ArchitectureView = lazy(() => import('./components/ArchitectureView.tsx').then((m) => ({ default: m.ArchitectureView })));
+const DomainModelView = lazy(() => import('./components/DomainModelView.tsx').then((m) => ({ default: m.DomainModelView })));
+const StateMachinesView = lazy(() => import('./components/StateMachinesView.tsx').then((m) => ({ default: m.StateMachinesView })));
+const MilestoneSimulator = lazy(() => import('./components/MilestoneSimulator.tsx').then((m) => ({ default: m.MilestoneSimulator })));
+const CostAndSecurityView = lazy(() => import('./components/CostAndSecurityView.tsx').then((m) => ({ default: m.CostAndSecurityView })));
+const BrandDesignView = lazy(() => import('./components/BrandDesignView.tsx').then((m) => ({ default: m.BrandDesignView })));
+const Phase1LiveWorkspace = lazy(() => import('./components/Phase1LiveWorkspace.tsx').then((m) => ({ default: m.Phase1LiveWorkspace })));
+const Phase2DailyOperations = lazy(() => import('./components/Phase2DailyOperations.tsx').then((m) => ({ default: m.Phase2DailyOperations })));
+const Phase3BusinessAndAI = lazy(() => import('./components/Phase3BusinessAndAI.tsx').then((m) => ({ default: m.Phase3BusinessAndAI })));
+const Phase4InspectionQualityLoop = lazy(() => import('./components/Phase4InspectionQualityLoop.tsx').then((m) => ({ default: m.Phase4InspectionQualityLoop })));
+const Phase5ReconstructionAndReports = lazy(() => import('./components/Phase5ReconstructionAndReports.tsx').then((m) => ({ default: m.Phase5ReconstructionAndReports })));
+const Phase6FullStackDeployment = lazy(() => import('./components/Phase6FullStackDeployment.tsx').then((m) => ({ default: m.Phase6FullStackDeployment })));
+const Phase7AcceptanceAndExporter = lazy(() => import('./components/Phase7AcceptanceAndExporter.tsx').then((m) => ({ default: m.Phase7AcceptanceAndExporter })));
+const Phase8AgriDataAndManual = lazy(() => import('./components/Phase8AgriDataAndManual.tsx').then((m) => ({ default: m.Phase8AgriDataAndManual })));
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('spec');
@@ -27,6 +27,7 @@ export default function App() {
 
       {/* 主內容區塊 */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <Suspense fallback={<div className="py-16 text-center text-sm text-stone-400">載入中…</div>}>
         {activeTab === 'phase1_live' && <Phase1LiveWorkspace />}
         {activeTab === 'phase2_daily' && <Phase2DailyOperations />}
         {activeTab === 'phase3_business' && <Phase3BusinessAndAI />}
@@ -36,11 +37,6 @@ export default function App() {
         {activeTab === 'phase7_acceptance' && <Phase7AcceptanceAndExporter />}
         {activeTab === 'phase8_agri_hub' && <Phase8AgriDataAndManual />}
         {activeTab === 'spec' && <SpecOverviewView />}
-
-
-
-
-
         {activeTab === 'arch' && <ArchitectureView />}
         {activeTab === 'domain' && <DomainModelView />}
         {activeTab === 'state' && <StateMachinesView />}
@@ -51,6 +47,7 @@ export default function App() {
             <BrandDesignView />
           </div>
         )}
+        </Suspense>
       </main>
 
       {/* 頁尾 */}

@@ -141,10 +141,12 @@ export function evaluateSprayingStatus(record: {
   }
 
   if (record.sprayApplied === true) {
-    if (record.hasChemicalDetails && record.isConfirmedByManager) {
-      return 'APPLIED';
+    // 缺產品、數量、日期等必要欄位 → 紀錄不完整（無論是否已確認）
+    if (!record.hasChemicalDetails) {
+      return 'INCOMPLETE_RECORD';
     }
-    return 'INCOMPLETE_RECORD';
+    // 資料齊全但尚未經管理者確認 → 仍是待確認，不是「不完整」
+    return record.isConfirmedByManager ? 'APPLIED' : 'PENDING_CONFIRMATION';
   }
 
   return 'PENDING_CONFIRMATION';
@@ -257,7 +259,7 @@ export function calculateGpuCostTwd(
   gpuType: 'GCP_T4_16GB' | 'GCP_L4_24GB' | 'GCP_A10G_24GB',
   durationMinutes: number
 ): number {
-  if (durationMinutes <= 0) return 0;
+  if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) return 0;
   // Hourly rates in USD
   const ratesPerHourUsd = {
     GCP_T4_16GB: 0.35,
@@ -297,7 +299,7 @@ export function reprojectCadastrePoint(
   const xCamera = dx * rightX + dy * rightY; // 右側偏移
 
   if (zDepth <= 0.1) {
-    return { screenX: -1, screenY: -1, distanceMeters: distance, isInFrontOfCamera: false };
+    return { screenX: -1, screenY: -1, distanceMeters: Math.round(distance * 10) / 10, isInFrontOfCamera: false };
   }
 
   // 3. 透視投影公式 u = fx * (X / Z) + cx
@@ -338,15 +340,15 @@ export function evaluateTapCompliance(params: {
 
 export interface OfflineConflictInput {
   entityType: 'WORK_LOG' | 'SPRAYING_RECORD' | 'INVENTORY_STOCK' | 'ATTENDANCE';
-  clientValue: any;
-  serverValue: any;
+  clientValue: unknown;
+  serverValue: unknown;
   clientTimestamp: string;
   serverTimestamp: string;
 }
 
 export interface ConflictResolutionResult {
   action: 'SERVER_WINS' | 'CLIENT_WINS' | 'MERGED' | 'MANUAL_REVIEW_REQUIRED';
-  finalValue: any;
+  finalValue: unknown;
   reason: string;
 }
 
@@ -358,15 +360,19 @@ export interface ConflictResolutionResult {
  * 3. 庫存與工資出現數值分歧時，強制進入主管人工審核佇列
  */
 export function resolveOfflineConflict(input: OfflineConflictInput): ConflictResolutionResult {
-  // 1. 施藥紀錄衝突：主管審定優先
+  const sameValue = input.clientValue === input.serverValue;
+  if (sameValue) {
+    return { action: 'SERVER_WINS', finalValue: input.serverValue, reason: '雙方數值一致，無衝突。' };
+  }
+
+  // 1. 施藥紀錄衝突：任何分歧都不可自動裁決（雙向皆然，
+  //    例如離線草稿「未施用」不可依時間戳覆蓋伺服端已確認的「已施用」）
   if (input.entityType === 'SPRAYING_RECORD') {
-    if (input.serverValue === 'CONFIRMED_NOT_APPLIED' && input.clientValue === 'APPLIED') {
-      return {
-        action: 'MANUAL_REVIEW_REQUIRED',
-        finalValue: input.serverValue,
-        reason: '伺服端已由經營主管簽認未施藥，離線草稿回報施藥，為防食安虛報強制進入人工仲裁。',
-      };
-    }
+    const reason =
+      input.serverValue === 'CONFIRMED_NOT_APPLIED' && input.clientValue === 'APPLIED'
+        ? '伺服端已由經營主管簽認未施藥，離線草稿回報施藥，為防食安虛報強制進入人工仲裁。'
+        : '施藥狀態涉及食安與安全採收期，離線與伺服端紀錄不一致時一律由管理者人工裁決，不依時間戳自動覆蓋。';
+    return { action: 'MANUAL_REVIEW_REQUIRED', finalValue: input.serverValue, reason };
   }
 
   // 2. 農事筆記與長輩錄音：文字追加合併 (保留雙方事實)
@@ -383,19 +389,34 @@ export function resolveOfflineConflict(input: OfflineConflictInput): ConflictRes
     }
   }
 
-  // 3. 工資與出勤衝突：強制主管人工確認
+  // 3. 工資、出勤與庫存數值衝突：強制主管人工確認
   if (input.entityType === 'ATTENDANCE') {
-    if (input.clientValue !== input.serverValue) {
-      return {
-        action: 'MANUAL_REVIEW_REQUIRED',
-        finalValue: input.serverValue, // 暫以伺服端為準，待主管覆核
-        reason: '工資金額或出勤工時不一致，避免溢發或短發工資，需帶班者人工覆核。',
-      };
-    }
+    return {
+      action: 'MANUAL_REVIEW_REQUIRED',
+      finalValue: input.serverValue, // 暫以伺服端為準，待主管覆核
+      reason: '工資金額或出勤工時不一致，避免溢發或短發工資，需帶班者人工覆核。',
+    };
+  }
+  if (input.entityType === 'INVENTORY_STOCK') {
+    return {
+      action: 'MANUAL_REVIEW_REQUIRED',
+      finalValue: input.serverValue,
+      reason: '庫存數量不一致；庫存應以異動帳（入庫／領用／調整）重算，不可直接以快照覆蓋，需人工覆核。',
+    };
   }
 
-  // 4. 一般狀態以伺服端或較新時間戳記為準 (Last-Write-Wins)
-  if (input.clientTimestamp > input.serverTimestamp) {
+  // 4. 一般狀態以較新時間戳記為準 (Last-Write-Wins)
+  //    以 Date.parse 比較，避免不同時區格式（+08:00 與 Z）以字串比較出錯
+  const clientMs = Date.parse(input.clientTimestamp);
+  const serverMs = Date.parse(input.serverTimestamp);
+  if (Number.isNaN(clientMs) || Number.isNaN(serverMs)) {
+    return {
+      action: 'MANUAL_REVIEW_REQUIRED',
+      finalValue: input.serverValue,
+      reason: '時間戳無法解析，無法判斷先後，需人工確認。',
+    };
+  }
+  if (clientMs > serverMs) {
     return {
       action: 'CLIENT_WINS',
       finalValue: input.clientValue,
@@ -439,10 +460,34 @@ export function evaluatePesticideSafetyInterval(
   };
 
   const requiredDays = intervalRules[pesticideCategory] ?? 7;
-  const sprayDate = new Date(sprayDateStr);
-  const harvestDate = new Date(targetHarvestDateStr);
-  const diffTime = harvestDate.getTime() - sprayDate.getTime();
-  const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  // 只取日期部分並以 UTC 午夜計算，避免含時間或時區的字串造成日數差一天
+  const toUtcDay = (str: string): number => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(str.trim());
+    return m ? Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : NaN;
+  };
+  const sprayDay = toUtcDay(sprayDateStr);
+  const harvestDay = toUtcDay(targetHarvestDateStr);
+
+  if (Number.isNaN(sprayDay) || Number.isNaN(harvestDay)) {
+    return {
+      isSafeToHarvest: false,
+      requiredIntervalDays: requiredDays,
+      daysPassed: 0,
+      daysRemaining: requiredDays,
+      officialNotice: '施藥日或預定採收日格式不正確（需為 YYYY-MM-DD），無法判斷，請勿採收。',
+    };
+  }
+
+  const daysPassed = Math.round((harvestDay - sprayDay) / (1000 * 60 * 60 * 24));
+  if (daysPassed < 0) {
+    return {
+      isSafeToHarvest: false,
+      requiredIntervalDays: requiredDays,
+      daysPassed: 0,
+      daysRemaining: requiredDays,
+      officialNotice: '預定採收日早於施藥日，日期可能填錯，請確認後再試算。',
+    };
+  }
   const daysRemaining = Math.max(0, requiredDays - daysPassed);
   const isSafe = daysPassed >= requiredDays;
 
@@ -456,7 +501,7 @@ export function evaluatePesticideSafetyInterval(
   return {
     isSafeToHarvest: isSafe,
     requiredIntervalDays: requiredDays,
-    daysPassed: Math.max(0, daysPassed),
+    daysPassed,
     daysRemaining,
     officialNotice: notice,
   };
@@ -487,6 +532,19 @@ export function calculateDisasterReliefEligibility(
   };
 
   const rate = rates[cropCategory] || 44000;
+
+  const validArea = Number.isFinite(damagedAreaHectares) && damagedAreaHectares > 0;
+  const validRatio = Number.isFinite(damageRatioPercent) && damageRatioPercent >= 0 && damageRatioPercent <= 100;
+  if (!validArea || !validRatio) {
+    return {
+      isEligibleForRelief: false,
+      standardRatePerHectareTWD: rate,
+      calculatedReliefTWD: 0,
+      officialThresholdMet: false,
+      reason: '受損面積需大於 0 公頃、損害率需介於 0%～100%，請修正輸入後再試算。',
+    };
+  }
+
   const isThresholdMet = damageRatioPercent >= 20;
 
   if (!isThresholdMet) {
